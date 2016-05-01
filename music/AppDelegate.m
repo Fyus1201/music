@@ -12,6 +12,8 @@
 #import "FYTuiViewController.h"
 #import "FYMyViewController.h"
 
+#import "MobClick.h"
+
 @interface AppDelegate ()
 
 @property (strong, nonatomic) UITabBarController *tabBarController;
@@ -22,12 +24,12 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    // Override point for customization after application launch. 5723010ee0f55a07a2000cf7
     
     self.window = [[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
     
     [self initTabBarController];
-    
+    [MobClick startWithAppkey:@"571a0a8de0f55a471a001314" reportPolicy:BATCH   channelId:@"GitHub"];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     //[self.window makeKeyWindow];//作为主窗口
