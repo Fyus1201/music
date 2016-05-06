@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -14,10 +15,35 @@
                         <viewControllerLayoutGuide type="bottom" id="xb3-aO-Qok"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="章鱼音乐" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vph-fu-ZHd">
+                                <rect key="frame" x="16" y="118" width="343" height="203"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="203" id="gMu-eP-lPv"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="60"/>
+                                <color key="textColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright © 2016年 Fyus1201. All rights reserved" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GmI-Z6-rfv">
+                                <rect key="frame" x="-4" y="624" width="383" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="GmI-Z6-rfv" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="-20" id="33E-ad-nR1"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="GmI-Z6-rfv" secondAttribute="bottom" constant="25" id="4TX-jW-eZl"/>
+                            <constraint firstItem="vph-fu-ZHd" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="5tp-cq-LTu"/>
+                            <constraint firstItem="vph-fu-ZHd" firstAttribute="centerX" secondItem="GmI-Z6-rfv" secondAttribute="centerX" id="AbP-oQ-nsW"/>
+                            <constraint firstItem="vph-fu-ZHd" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailingMargin" id="qQe-cs-D74"/>
+                            <constraint firstItem="vph-fu-ZHd" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="98" id="tj2-SL-9eN"/>
+                        </constraints>
                     </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
