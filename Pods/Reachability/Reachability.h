@@ -28,43 +28,45 @@
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
-#import <sys/socket.h>
-#import <netinet/in.h>
-#import <netinet6/in6.h>
-#import <arpa/inet.h>
-#import <ifaddrs.h>
-#import <netdb.h>
+
+/** 
+ * Create NS_ENUM macro if it does not exist on the targeted version of iOS or OS X.
+ *
+ * @see http://nshipster.com/ns_enum-ns_options/
+ **/
+#ifndef NS_ENUM
+#define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
+#endif
 
 extern NSString *const kReachabilityChangedNotification;
 
-typedef enum 
-{
-	// Apple NetworkStatus Compatible Names.
-	NotReachable     = 0,
-	ReachableViaWiFi = 2,
-	ReachableViaWWAN = 1
-} NetworkStatus;
+typedef NS_ENUM(NSInteger, NetworkStatus) {
+    // Apple NetworkStatus Compatible Names.
+    NotReachable = 0,
+    ReachableViaWiFi = 2,
+    ReachableViaWWAN = 1
+};
 
 @class Reachability;
 
 typedef void (^NetworkReachable)(Reachability * reachability);
 typedef void (^NetworkUnreachable)(Reachability * reachability);
 
+
 @interface Reachability : NSObject
 
 @property (nonatomic, copy) NetworkReachable    reachableBlock;
 @property (nonatomic, copy) NetworkUnreachable  unreachableBlock;
 
-@property (nonatomic, assign) SCNetworkReachabilityRef  reachabilityRef;
-@property (nonatomic, assign) dispatch_queue_t          reachabilitySerialQueue;
-
 @property (nonatomic, assign) BOOL reachableOnWWAN;
 
-@property (nonatomic, strong) id reachabilityObject;
 
 +(Reachability*)reachabilityWithHostname:(NSString*)hostname;
+// This is identical to the function above, but is here to maintain
+//compatibility with Apples original code. (see .m)
++(Reachability*)reachabilityWithHostName:(NSString*)hostname;
 +(Reachability*)reachabilityForInternetConnection;
-+(Reachability*)reachabilityWithAddress:(const struct sockaddr_in*)hostAddress;
++(Reachability*)reachabilityWithAddress:(void *)hostAddress;
 +(Reachability*)reachabilityForLocalWiFi;
 
 -(Reachability *)initWithReachabilityRef:(SCNetworkReachabilityRef)ref;

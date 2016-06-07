@@ -1,2 +1,2 @@
 # music
-准备做一个音乐app～
+使用AVPlayer自定义播放器~

@@ -1,38 +1,80 @@
 PODS:
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - BlocksKit (2.2.5):
+    - BlocksKit/All (= 2.2.5)
+  - BlocksKit/All (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+    - BlocksKit/MessageUI
+    - BlocksKit/UIKit
+  - BlocksKit/Core (2.2.5)
+  - BlocksKit/DynamicDelegate (2.2.5)
+  - BlocksKit/MessageUI (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
+  - BlocksKit/UIKit (2.2.5):
+    - BlocksKit/Core
+    - BlocksKit/DynamicDelegate
   - KVOController (1.1.0)
   - Mantle (2.0.7):
     - Mantle/extobjc (= 2.0.7)
   - Mantle/extobjc (2.0.7)
+  - Masonry (1.0.1)
   - MBProgressHUD (0.9.2)
+  - MJExtension (3.0.10)
   - MJRefresh (3.1.0)
-  - Reachability (3.0.0)
-  - SDWebImage (3.7.5):
-    - SDWebImage/Core (= 3.7.5)
-  - SDWebImage/Core (3.7.5)
+  - Reachability (3.2)
+  - SDWebImage (3.7.6):
+    - SDWebImage/Core (= 3.7.6)
+  - SDWebImage/Core (3.7.6)
   - SVProgressHUD (2.0.3)
-  - UMengAnalytics (3.6.6)
+  - UMengAnalytics (4.0.4)
   - WebViewJavascriptBridge (5.0.5)
 
 DEPENDENCIES:
+  - AFNetworking
+  - BlocksKit
   - KVOController
   - Mantle
-  - MBProgressHUD (~> 0.9.1)
+  - Masonry
+  - MBProgressHUD
+  - MJExtension
   - MJRefresh
-  - Reachability (~> 3.0.0)
+  - Reachability
   - SDWebImage
   - SVProgressHUD
   - UMengAnalytics
   - WebViewJavascriptBridge
 
 SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  BlocksKit: 7f422b971407001178d181a43b99014ea2591fe6
   KVOController: 321b5fc59300fcaabd42c0f679baa7a27efbb2fd
   Mantle: bc40bb061d8c2c6fb48d5083e04d928c3b7f73d9
+  Masonry: a1a931a0d08870ed8ae415a2ea5ea68ebcac77df
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  MJExtension: d86aacb740c87519d20e3cca55b6fa4be6cc7548
   MJRefresh: 743e6404967d1c2c688472ea3ecfde247d872db4
-  Reachability: 31e4272bd8378e094beaf6609dc182c85c4e6574
-  SDWebImage: 69c6303e3348fba97e03f65d65d4fbc26740f461
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  SDWebImage: c325cf02c30337336b95beff20a13df489ec0ec9
   SVProgressHUD: b0830714205bea1317ea1a2ebc71e5633af334d4
-  UMengAnalytics: 4bf831415146b9c57cb10be65fbd43462ef8cf65
+  UMengAnalytics: 4ed421fb3bca63b26fc13c947743cabf3831d199
   WebViewJavascriptBridge: a4d502315f1b8d9a51cd6a9174147ed567ec3bc5
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 738441c5d8371a6bd8954d4622c5db8195f33db2
+
+COCOAPODS: 1.0.0

@@ -7,16 +7,10 @@
 //
 
 #import "AppDelegate.h"
-
-#import "FYMainViewController.h"
-#import "FYTuiViewController.h"
-#import "FYMyViewController.h"
-
-#import "MobClick.h"
+#import "FYBarController.h"
+#import <UMMobClick/MobClick.h>//友盟统计
 
 @interface AppDelegate ()
-
-@property (strong, nonatomic) UITabBarController *tabBarController;
 
 @end
 
@@ -28,9 +22,12 @@
     
     self.window = [[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    [self initTabBarController];
-    [MobClick startWithAppkey:@"571a0a8de0f55a471a001314" reportPolicy:BATCH   channelId:@"GitHub"];
-    self.window.backgroundColor = [UIColor whiteColor];
+    UMAnalyticsConfig *configure = [[UMAnalyticsConfig alloc]init];
+    configure.appKey = @"571a0a8de0f55a471a001314";
+    [MobClick startWithConfigure:configure];
+    
+    //self.window.backgroundColor = [UIColor whiteColor];
+    self.window.rootViewController = [[FYBarController alloc] init];
     [self.window makeKeyAndVisible];
     //[self.window makeKeyWindow];//作为主窗口
     return YES;
@@ -59,35 +56,6 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-- (void)initTabBarController
-{
-    self.tabBarController  = [[UITabBarController alloc] init];
-    
-    FYMainViewController *item0 = [[FYMainViewController alloc]init];
-    [self controller:item0 title:@"精选" image:@"tab_icon_selection_normal" selectedimage:@"tab_icon_selection_highlight"];
-    
-    FYTuiViewController *item1 = [[FYTuiViewController alloc]init];
-    [self controller:item1 title:@"社区" image:@"icon_tab_shouye_normal" selectedimage:@"icon_tab_shouye_highlight"];
-    
-    FYMyViewController *item2 = [[FYMyViewController alloc]init];
-    [self controller:item2 title:@"活动" image:@"icon_tab_fujin_normal" selectedimage:@"icon_tab_fujin_normal_light"];
-    
-    
-    [[UITabBarItem appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor colorWithRed:252/255.0 green:74/255.0 blue:132/255.0 alpha:0.9],UITextAttributeTextColor, nil] forState:UIControlStateSelected];//颜色
-    
-    [self.tabBarController setSelectedIndex:0];
-    self.window.rootViewController = self.tabBarController;
-    
-}
 
-//初始化一个zi控制器
--(void)controller:(UIViewController *)TS title:(NSString *)title image:(NSString *)image selectedimage:(NSString *)selectedimage
-{
-    TS.tabBarItem.title = title;
-    TS.tabBarItem.image = [UIImage imageNamed:image];
-    TS.tabBarItem.selectedImage = [[UIImage imageNamed:selectedimage]imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:TS];
-    [self.tabBarController addChildViewController:nav];
-}
 
 @end

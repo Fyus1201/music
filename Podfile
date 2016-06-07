@@ -1,14 +1,18 @@
-platform :ios  
-pod 'Reachability',  '~> 3.0.0'    
-pod 'UMengAnalytics' 
 
-platform :ios, '7.0'  
+platform :ios, '7.0'
 
-pod 'MBProgressHUD', '~> 0.9.1'
-pod 'SVProgressHUD'
-pod 'KVOController'
-pod 'SDWebImage'
-pod 'Mantle'
-pod 'MJRefresh'
-
-pod 'WebViewJavascriptBridge'
+target 'music' do
+    pod 'Reachability'
+    pod 'UMengAnalytics'
+    pod 'AFNetworking'
+    pod 'MJExtension'
+    pod 'BlocksKit'
+    pod 'MBProgressHUD'
+    pod 'SVProgressHUD'
+    pod 'KVOController'
+    pod 'SDWebImage'
+    pod 'Mantle'
+    pod 'MJRefresh'
+    pod 'Masonry'
+    pod 'WebViewJavascriptBridge'
+end

@@ -27,15 +27,28 @@
 
 #import "Reachability.h"
 
+#import <sys/socket.h>
+#import <netinet/in.h>
+#import <netinet6/in6.h>
+#import <arpa/inet.h>
+#import <ifaddrs.h>
+#import <netdb.h>
+
 
 NSString *const kReachabilityChangedNotification = @"kReachabilityChangedNotification";
 
-@interface Reachability (private)
+
+@interface Reachability ()
+
+@property (nonatomic, assign) SCNetworkReachabilityRef  reachabilityRef;
+@property (nonatomic, strong) dispatch_queue_t          reachabilitySerialQueue;
+@property (nonatomic, strong) id                        reachabilityObject;
 
 -(void)reachabilityChanged:(SCNetworkReachabilityFlags)flags;
--(BOOL)setReachabilityTarget:(NSString*)hostname;
+-(BOOL)isReachableWithFlags:(SCNetworkReachabilityFlags)flags;
 
 @end
+
 
 static NSString *reachabilityFlags(SCNetworkReachabilityFlags flags) 
 {
@@ -55,13 +68,14 @@ static NSString *reachabilityFlags(SCNetworkReachabilityFlags flags)
             (flags & kSCNetworkReachabilityFlagsIsDirect)             ? 'd' : '-'];
 }
 
-//Start listening for reachability notifications on the current run loop
+// Start listening for reachability notifications on the current run loop
 static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info) 
 {
 #pragma unused (target)
+
     Reachability *reachability = ((__bridge Reachability*)info);
-    
-    // we probably dont need an autoreleasepool here as GCD docs state each queue has its own autorelease pool
+
+    // We probably don't need an autoreleasepool here, as GCD docs state each queue has its own autorelease pool,
     // but what the heck eh?
     @autoreleasepool 
     {
@@ -72,34 +86,34 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 
 @implementation Reachability
 
-@synthesize reachabilityRef;
-@synthesize reachabilitySerialQueue;
+#pragma mark - Class Constructor Methods
 
-@synthesize reachableOnWWAN;
++(Reachability*)reachabilityWithHostName:(NSString*)hostname
+{
+    return [Reachability reachabilityWithHostname:hostname];
+}
 
-@synthesize reachableBlock;
-@synthesize unreachableBlock;
-
-@synthesize reachabilityObject;
-
-#pragma mark - class constructor methods
 +(Reachability*)reachabilityWithHostname:(NSString*)hostname
 {
     SCNetworkReachabilityRef ref = SCNetworkReachabilityCreateWithName(NULL, [hostname UTF8String]);
     if (ref) 
     {
-        return [[self alloc] initWithReachabilityRef:ref];
+        id reachability = [[self alloc] initWithReachabilityRef:ref];
+
+        return reachability;
     }
     
     return nil;
 }
 
-+(Reachability *)reachabilityWithAddress:(const struct sockaddr_in *)hostAddress 
++(Reachability *)reachabilityWithAddress:(void *)hostAddress
 {
     SCNetworkReachabilityRef ref = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr*)hostAddress);
     if (ref) 
     {
-        return [[self alloc] initWithReachabilityRef:ref];
+        id reachability = [[self alloc] initWithReachabilityRef:ref];
+        
+        return reachability;
     }
     
     return nil;
@@ -124,15 +138,11 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     // IN_LINKLOCALNETNUM is defined in <netinet/in.h> as 169.254.0.0
     localWifiAddress.sin_addr.s_addr    = htonl(IN_LINKLOCALNETNUM);
     
-    Reachability* reach = [self reachabilityWithAddress:&localWifiAddress];
-    if(reach!= NULL)
-    {
-    }
-    return reach;
+    return [self reachabilityWithAddress:&localWifiAddress];
 }
 
 
-// initialization methods
+// Initialization methods
 
 -(Reachability *)initWithReachabilityRef:(SCNetworkReachabilityRef)ref 
 {
@@ -141,6 +151,11 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     {
         self.reachableOnWWAN = YES;
         self.reachabilityRef = ref;
+
+        // We need to create a serial queue.
+        // We allocate this once for the lifetime of the notifier.
+
+        self.reachabilitySerialQueue = dispatch_queue_create("com.tonymillion.reachability", NULL);
     }
     
     return self;    
@@ -149,90 +164,94 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 -(void)dealloc
 {
     [self stopNotifier];
+
     if(self.reachabilityRef)
     {
         CFRelease(self.reachabilityRef);
         self.reachabilityRef = nil;
     }
-#ifdef DEBUG
-    NSLog(@"Reachability: dealloc");
-#endif
+
+	self.reachableBlock          = nil;
+	self.unreachableBlock        = nil;
+    self.reachabilitySerialQueue = nil;
 }
 
-#pragma mark - notifier methods
+#pragma mark - Notifier Methods
 
 // Notifier 
-// NOTE: this uses GCD to trigger the blocks - they *WILL NOT* be called on THE MAIN THREAD
+// NOTE: This uses GCD to trigger the blocks - they *WILL NOT* be called on THE MAIN THREAD
 // - In other words DO NOT DO ANY UI UPDATES IN THE BLOCKS.
-//   INSTEAD USE dispatch_async(dispatch_get_main_thread(), ^{UISTUFF}) (or dispatch_sync if you want)
+//   INSTEAD USE dispatch_async(dispatch_get_main_queue(), ^{UISTUFF}) (or dispatch_sync if you want)
 
 -(BOOL)startNotifier
 {
-    SCNetworkReachabilityContext    context = { 0, NULL, NULL, NULL, NULL };
-    
-    // this should do a retain on ourself, so as long as we're in notifier mode we shouldn't disappear out from under ourselves
-    // woah
-    self.reachabilityObject = self;
-    
-    context.info = (__bridge void *)self;
-    
-    if (!SCNetworkReachabilitySetCallback(self.reachabilityRef, TMReachabilityCallback, &context)) 
+    // allow start notifier to be called multiple times
+    if(self.reachabilityObject && (self.reachabilityObject == self))
     {
-        printf("SCNetworkReachabilitySetCallback() failed: %s\n", SCErrorString(SCError()));
-        return NO;
-    }
-    
-    //create a serial queue
-    self.reachabilitySerialQueue = dispatch_queue_create("com.tonymillion.reachability", NULL);        
-    
-    // set it as our reachability queue which will retain the queue
-    if(SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, self.reachabilitySerialQueue))
-    {
-        dispatch_release(self.reachabilitySerialQueue);
-        // refcount should be ++ from the above function so this -- will mean its still 1
         return YES;
     }
-    
-    dispatch_release(self.reachabilitySerialQueue);
-    self.reachabilitySerialQueue = nil;
+
+
+    SCNetworkReachabilityContext    context = { 0, NULL, NULL, NULL, NULL };
+    context.info = (__bridge void *)self;
+
+    if(SCNetworkReachabilitySetCallback(self.reachabilityRef, TMReachabilityCallback, &context))
+    {
+        // Set it as our reachability queue, which will retain the queue
+        if(SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, self.reachabilitySerialQueue))
+        {
+            // this should do a retain on ourself, so as long as we're in notifier mode we shouldn't disappear out from under ourselves
+            // woah
+            self.reachabilityObject = self;
+            return YES;
+        }
+        else
+        {
+#ifdef DEBUG
+            NSLog(@"SCNetworkReachabilitySetDispatchQueue() failed: %s", SCErrorString(SCError()));
+#endif
+
+            // UH OH - FAILURE - stop any callbacks!
+            SCNetworkReachabilitySetCallback(self.reachabilityRef, NULL, NULL);
+        }
+    }
+    else
+    {
+#ifdef DEBUG
+        NSLog(@"SCNetworkReachabilitySetCallback() failed: %s", SCErrorString(SCError()));
+#endif
+    }
+
+    // if we get here we fail at the internet
+    self.reachabilityObject = nil;
     return NO;
 }
 
 -(void)stopNotifier
 {
-    // first stop any callbacks!
+    // First stop, any callbacks!
     SCNetworkReachabilitySetCallback(self.reachabilityRef, NULL, NULL);
     
-    // unregister target from the GCD serial dispatch queue
-    // this will mean the dispatch queue gets dealloc'ed
-    if(self.reachabilitySerialQueue)
-    {
-        SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, NULL);
-        self.reachabilitySerialQueue = nil;
-    }
-    
+    // Unregister target from the GCD serial dispatch queue.
+    SCNetworkReachabilitySetDispatchQueue(self.reachabilityRef, NULL);
+
     self.reachabilityObject = nil;
 }
 
 #pragma mark - reachability tests
 
-// this is for the case where you flick the airplane mode
+// This is for the case where you flick the airplane mode;
 // you end up getting something like this:
 //Reachability: WR ct-----
 //Reachability: -- -------
 //Reachability: WR ct-----
 //Reachability: -- -------
-// we treat this as 4 UNREACHABLE triggers - really apple should do better than this
+// We treat this as 4 UNREACHABLE triggers - really apple should do better than this
 
 #define testcase (kSCNetworkReachabilityFlagsConnectionRequired | kSCNetworkReachabilityFlagsTransientConnection)
 
--(BOOL)isReachable
+-(BOOL)isReachableWithFlags:(SCNetworkReachabilityFlags)flags
 {
-    SCNetworkReachabilityFlags flags;  
-    
-    if(!SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
-        return NO;
-    
     BOOL connectionUP = YES;
     
     if(!(flags & kSCNetworkReachabilityFlagsReachable))
@@ -244,10 +263,10 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 #if	TARGET_OS_IPHONE
     if(flags & kSCNetworkReachabilityFlagsIsWWAN)
     {
-        // we're on 3G
+        // We're on 3G.
         if(!self.reachableOnWWAN)
         {
-            // we dont want to connect when on 3G
+            // We don't want to connect when on 3G.
             connectionUP = NO;
         }
     }
@@ -256,18 +275,28 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     return connectionUP;
 }
 
+-(BOOL)isReachable
+{
+    SCNetworkReachabilityFlags flags;  
+    
+    if(!SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
+        return NO;
+    
+    return [self isReachableWithFlags:flags];
+}
+
 -(BOOL)isReachableViaWWAN 
 {
 #if	TARGET_OS_IPHONE
 
     SCNetworkReachabilityFlags flags = 0;
     
-    if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) 
+    if(SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
     {
-        // check we're REACHABLE
+        // Check we're REACHABLE
         if(flags & kSCNetworkReachabilityFlagsReachable)
         {
-            // now, check we're on WWAN
+            // Now, check we're on WWAN
             if(flags & kSCNetworkReachabilityFlagsIsWWAN)
             {
                 return YES;
@@ -283,13 +312,13 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
     SCNetworkReachabilityFlags flags = 0;
     
-    if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) 
+    if(SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
     {
-        // check we're reachable
+        // Check we're reachable
         if((flags & kSCNetworkReachabilityFlagsReachable))
         {
 #if	TARGET_OS_IPHONE
-            // check we're NOT on WWAN
+            // Check we're NOT on WWAN
             if((flags & kSCNetworkReachabilityFlagsIsWWAN))
             {
                 return NO;
@@ -314,7 +343,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
     SCNetworkReachabilityFlags flags;
 	
-	if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) 
+	if(SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
     {
 		return (flags & kSCNetworkReachabilityFlagsConnectionRequired);
 	}
@@ -327,7 +356,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
 	SCNetworkReachabilityFlags flags;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) 
+	if (SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
     {
 		return ((flags & kSCNetworkReachabilityFlagsConnectionRequired) &&
 				(flags & (kSCNetworkReachabilityFlagsConnectionOnTraffic | kSCNetworkReachabilityFlagsConnectionOnDemand)));
@@ -341,7 +370,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
     SCNetworkReachabilityFlags flags;
 	
-	if (SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) 
+	if (SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags))
     {
 		return ((flags & kSCNetworkReachabilityFlagsConnectionRequired) &&
 				(flags & kSCNetworkReachabilityFlagsInterventionRequired));
@@ -372,7 +401,7 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
     SCNetworkReachabilityFlags flags = 0;
     
-    if(SCNetworkReachabilityGetFlags(reachabilityRef, &flags)) 
+    if(SCNetworkReachabilityGetFlags(self.reachabilityRef, &flags)) 
     {
         return flags;
     }
@@ -384,17 +413,17 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
 {
 	NetworkStatus temp = [self currentReachabilityStatus];
 	
-	if(temp == reachableOnWWAN)
+	if(temp == ReachableViaWWAN)
 	{
-        // updated for the fact we have CDMA phones now!
-		return @"Cellular";
+        // Updated for the fact that we have CDMA phones now!
+		return NSLocalizedString(@"Cellular", @"");
 	}
 	if (temp == ReachableViaWiFi) 
 	{
-		return @"WiFi";
+		return NSLocalizedString(@"WiFi", @"");
 	}
 	
-	return @"No Connection";
+	return NSLocalizedString(@"No Connection", @"");
 }
 
 -(NSString*)currentReachabilityFlags
@@ -402,21 +431,14 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     return reachabilityFlags([self reachabilityFlags]);
 }
 
-#pragma mark - callback function calls this method
+#pragma mark - Callback function calls this method
 
 -(void)reachabilityChanged:(SCNetworkReachabilityFlags)flags
 {
-#ifdef DEBUG
-    NSLog(@"Reachability: %@", reachabilityFlags(flags));
-#endif
-    
-    if([self isReachable])
+    if([self isReachableWithFlags:flags])
     {
         if(self.reachableBlock)
         {
-#ifdef DEBUG
-            NSLog(@"Reachability: blocks are not called on the main thread.\n Use dispatch_async(dispatch_get_main_queue(), ^{}] to update your UI!");
-#endif
             self.reachableBlock(self);
         }
     }
@@ -424,9 +446,6 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
     {
         if(self.unreachableBlock)
         {
-#ifdef DEBUG
-            NSLog(@"Reachability: blocks are not called on the main thread.\n Use dispatch_async(dispatch_get_main_queue(), ^{}] to update your UI!");
-#endif
             self.unreachableBlock(self);
         }
     }
@@ -436,6 +455,15 @@ static void TMReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkRea
         [[NSNotificationCenter defaultCenter] postNotificationName:kReachabilityChangedNotification 
                                                             object:self];
     });
+}
+
+#pragma mark - Debug Description
+
+- (NSString *) description
+{
+    NSString *description = [NSString stringWithFormat:@"<%@: %#x (%@)>",
+                             NSStringFromClass([self class]), (unsigned int) self, [self currentReachabilityFlags]];
+    return description;
 }
 
 @end
