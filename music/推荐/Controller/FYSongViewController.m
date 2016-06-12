@@ -45,6 +45,7 @@
 
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     [self.navigationController setNavigationBarHidden:YES animated:YES];//隐藏 常态时是否隐藏 动画时是否显示
+    
     self.navigationItem.title = @"专辑详情";
     
 }
@@ -112,6 +113,7 @@
         // 刷新成功时候才作的方法
         // 顶头标题
         _infoView.title.text = self.tracksVM.albumTitle;
+        
         [_infoView sd_setImageWithURL:self.tracksVM.albumCoverLargeURL];        
         
         [_infoView.picView.coverView sd_setImageWithURL:self.tracksVM.albumCoverURL];
@@ -135,7 +137,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     _viewY = scrollView.contentOffset.y;
     
-    if (_viewY < -s_WindowW*0.5 ) {
+    if (_viewY < - s_WindowW*0.56 ){
         
         CGRect frame = _infoView.frame;
         frame.origin.y = _viewY;
@@ -206,7 +208,7 @@
     //NSLog(@"%@",[self.tracksVM coverURLForRow:indexPath.row]);
     
     //位置
-    if (_viewY < -s_WindowW*0.5) {
+    if (_viewY < -s_WindowW*0.56) {
         CGFloat origin = 190 + indexPath.row*80 - (254 + _viewY);
         NSNumber *originy = [[NSNumber alloc]initWithFloat:origin];
         userInfo[@"originy"] = originy;

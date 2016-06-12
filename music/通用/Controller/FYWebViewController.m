@@ -22,10 +22,7 @@
 
 @implementation FYWebViewController
 
-- (void)loadView
-{
-    self.edgesForExtendedLayout = UIRectEdgeNone;//修复iOS 7开始的顶部偏差44pt
-    self.automaticallyAdjustsScrollViewInsets = NO;//automaticallyAdjustsScrollViewInsets根据按所在界面的status bar，navigationbar，与tabbar的高度，自动调整scrollview的 inset,设置为no，不让viewController调整，我们自己修改布局即可
+- (void)loadView{
     
     self.webView = [[WKWebView alloc] init];
     // 导航代理
@@ -34,17 +31,12 @@
     self.webView.UIDelegate = self;
     
     self.view = self.webView;
-
     //开启手势触摸
     self.webView.allowsBackForwardNavigationGestures = YES;//开启手势
     
-    //self.webView.scalesPageToFit = YES;
-    //self.webView.delegate = self;
-    
 }
 
--(void)initViews
-{
+-(void)initViews{
     _activityView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width/2-15, [UIScreen mainScreen].bounds.size.height/2-85, 30, 30)];
     _activityView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
     //_activityView.backgroundColor = [UIColor redColor];
@@ -73,8 +65,8 @@
     
 }
 
-- (void)setURL:(NSURL *)URL
-{
+- (void)setURL:(NSURL *)URL{
+    
     _URL = URL;
     if (_URL)//懒加载
     {
@@ -85,8 +77,8 @@
 }
 
 #pragma mark - 入出 设置
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated{
+    
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = NO;
     self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
@@ -109,8 +101,8 @@
 
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
+-(void)viewWillDisappear:(BOOL)animated{
+    
     [super viewWillDisappear:animated];
 
     [_webView removeObserver:self forKeyPath:@"loading" context:nil];//移除kvo
@@ -120,8 +112,8 @@
 }
 
 #pragma mark - 初始化头部
--(void)setupnav
-{
+-(void)setupnav{
+    
     self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
 }
 
@@ -140,23 +132,23 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary<NSString *,id> *)change
-                       context:(void *)context
-{
-    if ([keyPath isEqualToString:@"loading"])
-    {
+                       context:(void *)context{
+    
+    if ([keyPath isEqualToString:@"loading"]){
+        
         NSLog(@"loading");
-    } else if ([keyPath isEqualToString:@"title"])
-    {
+    } else if ([keyPath isEqualToString:@"title"]){
+        
         self.title = self.webView.title;
-    } else if ([keyPath isEqualToString:@"estimatedProgress"])
-    {
+    } else if ([keyPath isEqualToString:@"estimatedProgress"]){
+        
         NSLog(@"progress: %f", self.webView.estimatedProgress);
         self.progressView.progress = self.webView.estimatedProgress;
     }
     
     // 加载完成
-    if (!self.webView.loading)
-    {
+    if (!self.webView.loading){
+        
         [UIView animateWithDuration:0.5 animations:^{
             self.progressView.alpha = 0.0;
         }];
@@ -167,43 +159,37 @@
 #pragma mark WKNavigationDelegate
 
 // 页面开始加载时调用
-- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
-{
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation{
     
 }
 
 // 当内容开始返回时调用
-- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
-{
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation{
     
 }
 
 // 页面加载完成之后调用
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation{
 
 }
 // 页面加载失败时调用
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation
-{
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation{
     
 }
 /*
 // 接收到服务器跳转请求之后调用
-- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation
-{
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation{
     
 }
 
 // 在收到响应后，决定是否跳转
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
-{
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler{
     
 }*/
 
 // 在发送请求之前，决定是否跳转
-- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
-{
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler{
+    
     NSString *schemeName = navigationAction.request.URL.scheme.lowercaseString;
     NSLog(@"你好%@",schemeName);
     
@@ -238,47 +224,38 @@
  *  @param frame             主窗口
  *  @param completionHandler 警告框消失调用
  */
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(void (^)())completionHandler;
-{
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(void (^)())completionHandler;{
     
 }
 #pragma mark - WKScriptMessageHandler
 // 从web界面中接收到一个脚本时调用
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
-{
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message{
 
 }
 
 #pragma mark - WebView 前进 后退 刷新 取消
 
-- (void)backButtonPush:(UIButton *)button
-{
-    if (self.webView.canGoBack)
-    {
+- (void)backButtonPush:(UIButton *)button{
+    if (self.webView.canGoBack){
         [self.webView goBack];
     }
 }
-- (void)forwardButtonPush:(UIButton *)button
-{
-    if (self.webView.canGoForward)
-    {
+- (void)forwardButtonPush:(UIButton *)button{
+    if (self.webView.canGoForward){
         [self.webView goForward];
-    }else
-    {
+    }else{
         //[self.navigationController popViewControllerAnimated:YES];
     }
 }
-- (void)reloadButtonPush:(UIButton *)button
-{
+- (void)reloadButtonPush:(UIButton *)button{
     
     [self.webView reload];
 }
 
-- (void)stopButtonPush:(UIButton *)button
-{
+- (void)stopButtonPush:(UIButton *)button{
     
-    if (self.webView.loading)
-    {
+    if (self.webView.loading){
+        
         [self.webView stopLoading];
     }
     

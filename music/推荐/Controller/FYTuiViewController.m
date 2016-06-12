@@ -8,22 +8,25 @@
 
 #import "FYTuiViewController.h"
 #import "FYTuiScrollView.h"
-
+#import "FYPlayManager.h"
 #import "PMElasticRefresh.h"
+/** 我的 */
+#import "FYMyViewCell.h"
+#import "FYMyViewController.h"
 
-/*推荐页*/
+/** 推荐页 */
 #import "MoreContentViewModel.h"
 
 #import "FYiCarouselView.h"
 #import "FYTitleViewCell.h"
 #import "FYMoreCategoryCell.h"
-/**分类页*/
+/** 分类页 */
 #import "FYCategoryTableCell.h"
 #import "FYCategoryViewController.h"
-/**详情页*/
+/** 详情页 */
 #import "FYSongViewController.h"
 
-#import "FYMyViewController.h"
+
 
 
 @interface FYTuiViewController ()<UIScrollViewDelegate,UITableViewDelegate,UITableViewDataSource>
@@ -44,6 +47,7 @@
 @property (nonatomic,strong) MoreContentViewModel *moreVM;
 @property (nonatomic,strong) FYiCarouselView *scrollView;
 @property (nonatomic,strong) NSMutableArray *KNamel;
+@property (nonatomic,strong) NSMutableArray *myArray;
 
 @end
 
@@ -53,47 +57,49 @@
 }
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = [UIColor whiteColor];
-
+    
     [self initUI];
 }
 
 #pragma mark - 入出 设置
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
+- (void)viewWillAppear:(BOOL)animated{
     
+    [super viewWillAppear:animated];
     
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated{
+    
     [super viewDidAppear:animated];
     
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    if (_tableView0.frame.size.height == self.view.frame.size.height-64) {
+
+    if (_tableView0.frame.size.height == s_WindowH-64) {
         [UIView animateWithDuration:0.2
                          animations:^{
-                             _tableView0.frame = CGRectMake(self.view.frame.size.width * 0, 0, self.view.frame.size.width, self.view.frame.size.height-64-49);
-                             _tableView1.frame = CGRectMake(self.view.frame.size.width * 1, 0, self.view.frame.size.width, self.view.frame.size.height-64-49);
-                             _tableView2.frame = CGRectMake(self.view.frame.size.width * 2, 0, self.view.frame.size.width, self.view.frame.size.height-64-49);
+                             _tableView0.frame = CGRectMake(self.view.frame.size.width * 0, 0, self.view.frame.size.width, s_WindowH-64-49);
+                             _tableView1.frame = CGRectMake(self.view.frame.size.width * 1, 0, self.view.frame.size.width, s_WindowH-64-49);
+                             _tableView2.frame = CGRectMake(self.view.frame.size.width * 2, 0, self.view.frame.size.width, s_WindowH-64-49);
                          }];
     }
+
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
+- (void)viewDidDisappear:(BOOL)animated{
+    
     [super viewDidDisappear:animated];
     
 
-    if (_tableView0.frame.size.height == self.view.frame.size.height-64-49) {
+    if (_tableView0.frame.size.height == s_WindowH-64-49) {
         [UIView animateWithDuration:0.2
                          animations:^{
-                             _tableView0.frame = CGRectMake(self.view.frame.size.width * 0, 0, self.view.frame.size.width, self.view.frame.size.height-64);
-                             _tableView1.frame = CGRectMake(self.view.frame.size.width * 1, 0, self.view.frame.size.width, self.view.frame.size.height-64);
-                             _tableView2.frame = CGRectMake(self.view.frame.size.width * 2, 0, self.view.frame.size.width, self.view.frame.size.height-64);
+                             _tableView0.frame = CGRectMake(self.view.frame.size.width * 0, 0, self.view.frame.size.width, s_WindowH-64);
+                             _tableView1.frame = CGRectMake(self.view.frame.size.width * 1, 0, self.view.frame.size.width, s_WindowH-64);
+                             _tableView2.frame = CGRectMake(self.view.frame.size.width * 2, 0, self.view.frame.size.width, s_WindowH-64);
                          }];
     }
     
@@ -101,14 +107,13 @@
     
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
+-(void)viewWillDisappear:(BOOL)animated{
+    
     [super viewWillDisappear:animated];
     
 }
 #pragma mark - 初始设置
--(void)initUI
-{
+-(void)initUI{
 
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width-20, 40)];
 
@@ -156,14 +161,14 @@
 -(UIScrollView *)scroll{
     
     if (!_scroll){
-        _scroll = [[FYTuiScrollView alloc]initWithFrame:CGRectMake(0 , 0, self.view.frame.size.width, self.view.frame.size.height)];
-        _scroll.contentSize = CGSizeMake(self.view.frame.size.width * 3, 0);
+        _scroll = [[FYTuiScrollView alloc]initWithFrame:CGRectMake(0 , 0, s_WindowW, s_WindowH)];
+        _scroll.contentSize = CGSizeMake(s_WindowW * 3, 0);
         
         _scroll.pagingEnabled = YES;
         _scroll.showsHorizontalScrollIndicator = NO;
         _scroll.delegate = self;
         _scroll.bounces = NO;
-        self.scroll.contentOffset = CGPointMake(self.view.frame.size.width, 0);
+        self.scroll.contentOffset = CGPointMake(s_WindowW, 0);
         _scroll.alwaysBounceVertical = NO;
     }
     return _scroll;
@@ -173,19 +178,23 @@
     for (int i = 0; i < 3; i ++ ){
         if(i == 0){
             
-            _tableView0 = [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.size.width * i, 0, self.view.frame.size.width, self.view.frame.size.height-64-49) style:UITableViewStyleGrouped];
+            _tableView0 = [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.size.width * i, 0, s_WindowW, s_WindowH-64-49) style:UITableViewStyleGrouped];
             
             _tableView0.tag = 100 + i;
             _tableView0.delegate = self;
             _tableView0.dataSource = self;
             
-            _tableView0.backgroundColor = [UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1.0];
+            _tableView0.backgroundColor = [UIColor whiteColor];
             
+            [_tableView0 registerClass:[FYMyViewCell class] forCellReuseIdentifier:@"MCell001"];
+            NSString *plistPath = [[NSBundle mainBundle]pathForResource:@"myData" ofType:@"plist"];
+            _myArray = [[NSMutableArray alloc]initWithContentsOfFile:plistPath];
+
             [self.scroll addSubview:_tableView0];
             
         }else if (i == 1) {
             
-            _tableView1 = [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.size.width * i, 0, self.view.frame.size.width, self.view.frame.size.height-64-49) style:UITableViewStyleGrouped];
+            _tableView1 = [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.size.width * i, 0, s_WindowW, s_WindowH-64-49) style:UITableViewStyleGrouped];
             
             _tableView1.tag = 100 + i;
             _tableView1.delegate = self;
@@ -210,7 +219,7 @@
 
             [self.scroll addSubview:_tableView1];
         }else{
-            _tableView2 = [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.size.width * i, 0, self.view.frame.size.width, self.view.frame.size.height-64-49) style:UITableViewStyleGrouped];
+            _tableView2 = [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.size.width * i, 0, s_WindowW, s_WindowH-64-49) style:UITableViewStyleGrouped];
             
             _tableView2.tag = 100 + i;
             _tableView2.delegate = self;
@@ -413,7 +422,10 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     
     if (tableView.tag == 100) {
-        return 10;
+        if (section == 0) {
+            return 40;
+        }else
+        return 0.0001;
     }else if(tableView.tag == 101){
          return !section ? 0: 35;
     }else{
@@ -425,7 +437,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     
     if (tableView.tag == 100) {
-        return 10;
+        return 0.0001;
     }else if(tableView.tag == 101){
         return 10;
     }else{
@@ -437,7 +449,7 @@
 - (CGFloat)tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView.tag == 100) {
-        return 200;
+        return 70;
     }else if(tableView.tag == 101){
         return 70;
     }else{
@@ -449,13 +461,10 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (tableView.tag == 100) {
         
-        static NSString *cellID = @"cell0";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-        if (cell == nil)
-        {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
-        }
-        cell.textLabel.text = @"好啊";
+        FYMyViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MCell001"];
+        
+        [cell setAct:_myArray[indexPath.section]];
+        
         return cell;
 
         
@@ -483,7 +492,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
 
         } else {
             
-            
             FYMoreCategoryCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MCell101"];
             [cell.coverBtn setImageForState:UIControlStateNormal withURL:[self.moreVM coverURLForIndexPath:indexPath] placeholderImage:[UIImage imageNamed:@"find_albumcell_cover_bg"]];
             cell.titleLb.text = [self.moreVM titleForIndexPath:indexPath];
@@ -491,9 +499,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             cell.playsLb.text = [self.moreVM playsForIndexPath:indexPath];
             cell.tracksLb.text = [self.moreVM tracksForIndexPath:indexPath];
             return cell;
-
         }
-
 
     }else if(tableView.tag == 102){
 
@@ -518,9 +524,22 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (tableView.tag == 100) {
-        FYMyViewController *web0 = [[FYMyViewController alloc]init];
         
-        [self.navigationController pushViewController:web0 animated:YES];//1.点击，相应跳转
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        if (indexPath.section == 0) {
+            
+            FYMyViewController *myView = [[FYMyViewController alloc]init];
+            myView.itemModel = favoritelItem;
+            [self.navigationController pushViewController:myView animated:YES];
+            
+        }else if(indexPath.section == 1){
+            
+            FYMyViewController *myView = [[FYMyViewController alloc]init];
+            myView.itemModel = historyItem;
+            [self.navigationController pushViewController:myView animated:YES];
+            
+        }
+
     }else if(tableView.tag == 101){
 
         [tableView deselectRowAtIndexPath:indexPath animated:YES];

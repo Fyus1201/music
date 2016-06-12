@@ -7,6 +7,7 @@
 //
 
 #import "BaseViewModel.h"
+
 /**
  *  选集VM
  */
@@ -14,6 +15,9 @@
 
 // 以albumId ,title初始化 VM
 - (instancetype)initWithAlbumId:(NSInteger)albumId title:(NSString *)title isAsc:(BOOL)asc;
+- (instancetype)initWithitemModel:(NSInteger )itemMel;
+- (void)getItemModelData:(void (^)(NSError *))completed;
+
 @property (nonatomic,assign) NSInteger albumId;
 @property (nonatomic,strong) NSString *title;
 @property (nonatomic,assign,getter=isAsc) BOOL asc;
@@ -39,6 +43,14 @@
 /** 通过行数, 返回集数图片地址 */
 - (NSURL *)coverURLForRow:(NSInteger)row;
 - (NSURL *)coverLargeURLForRow:(NSInteger)row;
+/** 通过行数，返回字典 */
+- (NSDictionary *)trackForRow:(NSInteger)row;
+/** 通过行数, 返回播放ID */
+- (NSInteger )trackIdForRow:(NSInteger)row;
+/** 通过行数, 返回专辑ID */
+- (NSInteger )albumIdForRow:(NSInteger)row;
+/** 返回总歌曲数 */
+- (NSInteger )trackRow;
 
 /** 返回专辑标题 */
 @property (nonatomic,strong) NSString *albumTitle;

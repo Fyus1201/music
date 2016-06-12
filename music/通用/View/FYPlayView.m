@@ -53,8 +53,10 @@
             make.height.mas_equalTo(70);
             
             make.right.equalTo(self).with.offset(0);
-
         }];
+        
+        [self.playButton setImage:[UIImage imageNamed:@"tabbar_np_play"] forState:UIControlStateNormal];
+        [self.playButton addTarget:self action:@selector(touchPlayButton:) forControlEvents:UIControlEventTouchUpInside];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(OnTapBackView:)];
         _circleIV.tag = 200;
@@ -63,8 +65,8 @@
         // 设置circle的用户交互
         backgoundIV.userInteractionEnabled = YES;
         _circleIV.userInteractionEnabled = YES;
-        
     }
+    
     return self;
 }
 
@@ -80,13 +82,48 @@
         // KVO观察image变化, 变化了就初始化定时器, 值变化则执行task, BlockKit框架对通知的一个拓展
         [_contentIV bk_addObserverForKeyPath:@"image" options:NSKeyValueObservingOptionNew task:^(id obj, NSDictionary *change) {
             // 启动定时器
-
         }];
         // 作圆内容视图背景
         _contentIV.layer.cornerRadius = 22;
         _contentIV.clipsToBounds = YES;
     }
     return _contentIV;
+}
+
+- (UIButton *)playButton {
+    
+    if (!_playButton) {
+        _playButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_playButton setHighlighted:NO];// 去掉长按高亮
+        _playButton.tag = 101;
+        [self  addSubview:_playButton];
+        [_playButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.mas_equalTo(0);
+            make.right.mas_equalTo(0);
+            make.width.mas_equalTo(65);
+            make.height.mas_equalTo(70);
+        }];
+    }
+    
+    return _playButton;
+}
+
+- (void)setPlayButtonView{
+    
+    [self.playButton setBackgroundImage:nil forState:UIControlStateNormal];
+    [self.playButton setImage:nil forState:UIControlStateNormal];
+}
+
+- (void)setPauseButtonView{
+    
+    [self.playButton setBackgroundImage:[UIImage imageNamed:@"avatar_bg"] forState:UIControlStateNormal];
+    [self.playButton setImage:[UIImage imageNamed:@"toolbar_play_h_p"] forState:UIControlStateNormal];
+}
+
+-(void)touchPlayButton:(UIButton *)sender{
+    
+    int tag = (int)sender.tag-100;
+    [self.delegate playButtonDidClick:tag];
 }
 
 -(void)OnTapBackView:(UITapGestureRecognizer *)sender//点击触发 手势

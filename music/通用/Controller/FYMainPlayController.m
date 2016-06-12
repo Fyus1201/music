@@ -59,7 +59,7 @@
 @property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSTimeInterval total;
 
-@property (nonatomic,strong) AVPlayer *player;
+@property (nonatomic,strong) FYPlayManager *playmanager;
 
 @end
 
@@ -69,7 +69,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self adapterIphone4];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -83,10 +82,9 @@
     [super viewWillAppear:animated];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     //初始化UI
-    FYPlayManager *playmanager = [FYPlayManager sharedInstance];
-    _player = playmanager.player;
+    _playmanager = [FYPlayManager sharedInstance];
     
-    _cycle = [playmanager FYPlayerCycle];
+    _cycle = [_playmanager FYPlayerCycle];
     switch (_cycle) {
         case theSong:
             
@@ -106,41 +104,27 @@
     }
     
     //判断
-    _musicNameLabel.text = [playmanager playMusicName];
-    _musicTitleLabel.text = [playmanager playMusicTitle];
-    _singerLabel.text = [playmanager playSinger];
-    [self setupBackgroudImage:[playmanager playCoverLarge]];
+    _musicNameLabel.text = [_playmanager playMusicName];
+    _musicTitleLabel.text = [_playmanager playMusicTitle];
+    _singerLabel.text = [_playmanager playSinger];
+    [self setupBackgroudImage:[_playmanager playCoverLarge]];
     
-    CMTime time = self.player.currentTime;
-    [self updateProgressLabelCurrentTime:CMTimeGetSeconds(time) duration:CMTimeGetSeconds([_player.currentItem duration])];
-    [self addObserverToPlayer:_player];
+    [self updateProgressLabelCurrentTime:CMTimeGetSeconds([_playmanager.player.currentItem currentTime]) duration:CMTimeGetSeconds([_playmanager.player.currentItem duration])];
+    [self addObserverToPlayer:_playmanager.player];
     
-    if (_player.rate) {
+    if (_playmanager.player.rate) {
         self.musicIsPlaying = YES;
     } else {
         self.musicIsPlaying = NO;
     }
     
-    AVPlayerItem *theItem=_player.currentItem;
-    _total = CMTimeGetSeconds([theItem duration]);
+    if ([_playmanager hasBeenFavoriteMusic]) {
+        [_favoriteButton setImage:[UIImage imageNamed:@"red_heart"] forState:UIControlStateNormal];
+    } else {
+        [_favoriteButton setImage:[UIImage imageNamed:@"empty_heart"] forState:UIControlStateNormal];
+    }
     
-    __weak FYMainPlayController *weakSelf = self;
-    [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
-        
-        FYMainPlayController *innerSelf = weakSelf;
-        NSTimeInterval current=CMTimeGetSeconds(time);
-        
-        if (_newItem == YES) {
-            AVPlayerItem *newItem=innerSelf.player.currentItem;
-            if (!isnan(CMTimeGetSeconds([newItem duration]) )) {
-                
-                innerSelf.total = CMTimeGetSeconds([newItem duration]);
-                _newItem = NO;
-            }
-        }
-
-        [innerSelf updateProgressLabelCurrentTime:current duration:innerSelf.total];
-    }];
+    _newItem = YES;
 
 }
 
@@ -153,12 +137,15 @@
 #pragma mark - KVO
 /** 给AVPlayer添加监控 */
 -(void)addObserverToPlayer:(AVPlayer *)player{
-
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(musicTimeInterval:) name:@"musicTimeInterval" object:nil];
+    
     [player addObserver:self forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:nil];
     [player addObserver:self forKeyPath:@"currentItem" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 -(void)removeObserverFromPlayer:(AVPlayer *)player{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [player removeObserver:self forKeyPath:@"rate"];
     [player removeObserver:self forKeyPath:@"currentItem"];
 }
@@ -166,13 +153,15 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"rate"]) {
-        AVPlayerStatus rate= [[change objectForKey:@"new"] intValue];
+        //AVPlayerStatus rate= [[change objectForKey:@"new"] intValue];
         //判断暂停/播放
-        if (rate) {
+        if ([[FYPlayManager sharedInstance] isPlay]) {
             self.musicIsPlaying = YES;
-        } else {
+        }else{
             self.musicIsPlaying = NO;
         }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"setPausePlayView" object:nil userInfo:nil];
+
     }else if ([keyPath isEqualToString:@"currentItem"]) {
         
         FYPlayManager *playmanager = [FYPlayManager sharedInstance];
@@ -181,9 +170,32 @@
         _musicTitleLabel.text = [playmanager playMusicTitle];
         _singerLabel.text = [playmanager playSinger];
         [self setupBackgroudImage:[playmanager playCoverLarge]];
+        [playmanager setHistoryMusic];
+        if ([_playmanager hasBeenFavoriteMusic]) {
+            [_favoriteButton setImage:[UIImage imageNamed:@"red_heart"] forState:UIControlStateNormal];
+        } else {
+            [_favoriteButton setImage:[UIImage imageNamed:@"empty_heart"] forState:UIControlStateNormal];
+        }
         
         _newItem = YES;
     }
+}
+
+-(void)musicTimeInterval:(NSNotification *)notification{
+    
+    NSTimeInterval current=CMTimeGetSeconds([_playmanager.player.currentItem currentTime]);
+    
+    if (_newItem == YES) {
+        AVPlayerItem *newItem=self.playmanager.player.currentItem;
+        if (!isnan(CMTimeGetSeconds([newItem duration]) )) {
+            
+            self.total = CMTimeGetSeconds([newItem duration]);
+            
+            _newItem = NO;
+        }
+    }
+    
+    [self updateProgressLabelCurrentTime:current duration:self.total];
 }
 
 #pragma mark - 初始化
@@ -228,7 +240,6 @@
 - (void)updateProgressLabelCurrentTime:(NSTimeInterval )currentTime duration:(NSTimeInterval )duration {
     _beginTimeLabel.text = [NSString timeIntervalToMMSSFormat:currentTime];
     _endTimeLabel.text = [NSString timeIntervalToMMSSFormat:duration];
-    
     if (_musicIsCan == YES) {
         
         CGFloat currentTimef = currentTime;
@@ -245,15 +256,22 @@
     }
 }
 
+- (void)checkMusicFavoritedIcon {
+    if ([_playmanager hasBeenFavoriteMusic]) {
+        [_favoriteButton setImage:[UIImage imageNamed:@"red_heart"] forState:UIControlStateNormal];
+    } else {
+        [_favoriteButton setImage:[UIImage imageNamed:@"empty_heart"] forState:UIControlStateNormal];
+    }
+}
+
+#pragma mark - 点击事件
 /** 播放按钮 */
 - (IBAction)didTouchMusicToggleButton:(id)sender {
 
-    if (_player.status) {
-        if (_player.rate) {
-            [_player pause];
-        } else {
-            [_player play];
-        }
+    if (_playmanager.player.status == 1) {
+        
+        [_playmanager pauseMusic];
+        
     }else{
         [self showMiddleHint:@"当前没有音乐"];
     }
@@ -270,7 +288,7 @@
     NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
     [user setObject:userCycle forKey:@"cycle"];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"nextCycle" object:nil userInfo:nil];
+    [_playmanager nextCycle];
     
     switch (_cycle) {
         case theSong:
@@ -294,22 +312,29 @@
     }
     
 }
+- (IBAction)idiTouchFavorite:(id)sender {
+    
+    
+    [_favoriteButton startDuangAnimation];
+    if ([_playmanager hasBeenFavoriteMusic]) {
+        [_playmanager delFavoriteMusic];
+        [_favoriteButton setImage:[UIImage imageNamed:@"empty_heart"] forState:UIControlStateNormal];
+    } else {
+        
+        [_playmanager setFavoriteMusic];
+        [_favoriteButton setImage:[UIImage imageNamed:@"red_heart"] forState:UIControlStateNormal];
+    }
+}
 /** 更多按钮 */
 - (IBAction)didTouchMoreButton:(id)sender {
-    
-    NSLog(@"%f",_player.rate);
-    AVPlayerItem *theItem=_player.currentItem;
-    _total = CMTimeGetSeconds([theItem duration]);
-    NSLog(@"%f",_total);
-    
-    NSDictionary* defaults = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-    NSLog(@"Defaults: %@", defaults[@"cycle"]);
+    NSArray *aa = [[FYPlayManager sharedInstance] favoriteMusicItems];
+    NSLog(@"%@",aa);
 }
 
 - (IBAction)playPreviousMusic:(id)sender {
 
-    if (_player.status) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"previousMusic" object:nil userInfo:nil];
+    if (_playmanager.player.status == 1) {
+        [_playmanager previousMusic];
     }else{
         [self showMiddleHint:@"当前没有音乐"];
     }
@@ -318,8 +343,8 @@
 
 - (IBAction)playNextMusic:(id)sender {
     
-    if (_player.status) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"nextMusic" object:nil userInfo:nil];
+    if (_playmanager.player.status == 1) {
+        [_playmanager nextMusic];
     }else{
         [self showMiddleHint:@"当前没有音乐"];
     }
@@ -333,21 +358,23 @@
 
 //拖动条
 - (IBAction)changeMusicTime:(id)sender {
+    
     _musicIsChange = YES;
     
 }
 - (IBAction)setMusicTime:(id)sender {
     
-    CGFloat endTime = CMTimeGetSeconds([_player.currentItem duration]);
+    CGFloat endTime = CMTimeGetSeconds([_playmanager.player.currentItem duration]);
     NSInteger dragedSeconds = floorf(self.musicSlider.value * endTime);
 
     //转换成CMTime才能给player来控制播放进度
-    [[self player] seekToTime:CMTimeMakeWithSeconds(dragedSeconds, 1)];
+    [_playmanager.player seekToTime:CMTimeMakeWithSeconds(dragedSeconds, 1)];
     
     _musicIsChange = NO;
     _musicIsCan = YES;
 }
 - (IBAction)noChangeMusic:(id)sender {
+    
     _musicIsChange = NO;
 }
 
@@ -368,7 +395,7 @@
 
 - (void)dealloc{
 
-    [self removeObserverFromPlayer:_player];
+    [self removeObserverFromPlayer:_playmanager.player];
     NSLog(@"dealloc");
 }
 

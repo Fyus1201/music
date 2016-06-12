@@ -19,7 +19,14 @@ typedef NS_ENUM(NSInteger, FYPlayerCycle) {
     nextSong = 2,
     isRandom = 3
 };
+//播放状态
+typedef NS_ENUM(NSInteger, itemModel) {
+    historyItem = 0,
+    favoritelItem = 1
+};
+
 @property (nonatomic, strong) AVPlayer *player;
+@property (nonatomic) BOOL isPlay;
 
 /** 初始化 */
 + (instancetype)sharedInstance;
@@ -30,6 +37,19 @@ typedef NS_ENUM(NSInteger, FYPlayerCycle) {
 - (void)playWithModel:(TracksViewModel *)tracks indexPathRow:(NSInteger ) indexPathRow;
 
 - (void)pauseMusic;
+- (void)previousMusic;
+- (void)nextMusic;
+- (void)nextCycle;
+
+- (void)setFavoriteMusic;
+- (void)setHistoryMusic;
+
+- (void)delFavoriteMusic;
+- (void)delMyFavoriteMusic:(NSInteger )indexPathRow;
+- (void)delMyFavoriteMusicDictionary:(NSDictionary *)track;
+- (void)delMyHistoryMusic:(NSDictionary *)track;
+- (void)delAllHistoryMusic;
+- (void)delAllFavoriteMusic;
 - (void)stopMusic;
 
 /** 状态查询 */
@@ -40,6 +60,15 @@ typedef NS_ENUM(NSInteger, FYPlayerCycle) {
 - (NSString *)playSinger;
 - (NSString *)playMusicTitle;
 - (NSURL *)playCoverLarge;
+- (UIImage *)playCoverImage;
+
+- (BOOL)hasBeenFavoriteMusic;
+
+- (NSArray *)favoriteMusicItems;
+- (NSArray *)historyMusicItems;
+
+/** 保存 */
+- (BOOL)saveChanges;
 
 //播放音效
 - (void)playSound:(NSString *)filename;

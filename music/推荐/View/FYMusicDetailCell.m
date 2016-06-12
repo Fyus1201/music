@@ -20,6 +20,7 @@
             make.left.mas_equalTo(10);
         }];
         _coverIV.layer.cornerRadius=50/2;
+        _coverIV.clipsToBounds = YES;
         //添加播放标识
         UIImageView *playIV=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"find_album_play"]];
         [_coverIV addSubview:playIV];

@@ -8,15 +8,18 @@
 
 #import "FYMyViewController.h"
 #import "FYMusicDetailCell.h"
+
+#import "FYPlayManager.h"
 #import "TracksViewModel.h"
+
+#import "FYfavoriteItem.h"
+#import "FYhistoryItem.h"
 
 @interface FYMyViewController ()<UITableViewDelegate,UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *mainTableView;
 @property (nonatomic,strong) TracksViewModel *tracksVM;
 
-// 升序降序标签: 默认升序
-@property (nonatomic,assign) BOOL isAsc;
 @end
 
 @implementation FYMyViewController{
@@ -37,33 +40,37 @@
 }
 
 #pragma mark - 入出 设置
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated{
+    
     [super viewWillAppear:animated];
     self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
 
+    [self.tracksVM getItemModelData:^(NSError *error) {
+        [self.mainTableView reloadData];
+    }];
+    [self.mainTableView reloadData];
 }
 
 
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated{
+    
     [super viewDidAppear:animated];
+
     
 }
 
 
-- (void)viewDidDisappear:(BOOL)animated
-{
+- (void)viewDidDisappear:(BOOL)animated{
+    
     [super viewDidDisappear:animated];
+
     
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
+-(void)viewWillDisappear:(BOOL)animated{
     
-
+    [super viewWillDisappear:animated];
 }
 
 
@@ -72,11 +79,20 @@
     self.navigationController.navigationBar.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
     
-    self.navigationItem.title = @"音乐";
+    if (_itemModel == 0) {
+         self.navigationItem.title = @"历史音乐";
+    }else if(_itemModel == 1){
+         self.navigationItem.title = @"我的收藏";
+    }else{
+         self.navigationItem.title = @"音乐";
+    }
+   
     
     UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] init];
-    rightButton.title = @"清除";
+    rightButton.title = @"清空";
     self.navigationItem.rightBarButtonItem = rightButton;
+    rightButton.target = self;
+    rightButton.action = @selector(delAll);
     
     UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
     backItem.title = @"";
@@ -85,6 +101,7 @@
     self.navigationController.navigationBar.translucent = NO;//是否为半透明
     
 }
+
 #pragma mark - 表格+下拉动画
 - (void)initMainTableView{
     
@@ -95,16 +112,13 @@
     [_mainTableView registerClass:[FYMusicDetailCell class] forCellReuseIdentifier:@"MusicDetailCell"];
     _mainTableView.rowHeight = 80;
     [self.view addSubview:self.mainTableView];
-    
-    [self.tracksVM getDataCompletionHandle:^(NSError *error) {
-        [self.mainTableView reloadData];
-    }];
-    [self.mainTableView reloadData];
+
 }
 
 - (TracksViewModel *)tracksVM {
     if (!_tracksVM) {
-        _tracksVM = [[TracksViewModel alloc] initWithAlbumId:259608 title:@"音乐大明星" isAsc:!_isAsc];
+        _tracksVM = [[TracksViewModel alloc] initWithitemModel:self.itemModel];
+        
     }
     return _tracksVM;
 }
@@ -112,6 +126,24 @@
 // 连带滚动方法
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     _viewY = scrollView.contentOffset.y;
+}
+
+- (void)delAll{
+    if (_itemModel == historyItem) {
+        
+        [[FYPlayManager sharedInstance] delAllHistoryMusic];
+        [self.tracksVM getItemModelData:^(NSError *error) {
+            [self.mainTableView reloadData];
+        }];
+        [self.mainTableView reloadData];
+        
+    }else if(_itemModel == favoritelItem){
+        [[FYPlayManager sharedInstance] delAllFavoriteMusic];
+        [self.tracksVM getItemModelData:^(NSError *error) {
+            [self.mainTableView reloadData];
+        }];
+        [self.mainTableView reloadData];
+    }
 }
 
 #pragma mark - UITableView协议方法
@@ -141,12 +173,32 @@
 
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
     //如果申请删除操作
-    if (editingStyle == UITableViewCellEditingStyleDelete)
-    {
-        //删除表格中的相应对象，带动画
+    if (editingStyle == UITableViewCellEditingStyleDelete){
+
+        if (_itemModel == historyItem) {
+            NSDictionary *track = [self.tracksVM trackForRow:indexPath.row];
+            [[FYPlayManager sharedInstance] delMyHistoryMusic:track];
+        }else if(_itemModel == favoritelItem){
+            NSDictionary *track = [self.tracksVM trackForRow:indexPath.row];
+            [[FYPlayManager sharedInstance] delMyFavoriteMusicDictionary:track];
+        }
+        
+        [self.tracksVM getItemModelData:^(NSError *error) {
+        }];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+
     }
     
+}
+
+//删除提示文本
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0){
+    if(_itemModel == favoritelItem){
+        NSString *deltext = @"清除";
+        return deltext;
+    }
+    NSString *deltext = @"删除";
+    return deltext;
 }
 
 //设置禁止删除,每次设置时候调用
@@ -165,8 +217,6 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     userInfo[@"coverURL"] = [self.tracksVM coverURLForRow:indexPath.row];
     userInfo[@"musicURL"] = [self.tracksVM playURLForRow:indexPath.row];
-    //有一个地址不能正确显示图片，搞不懂
-    //NSLog(@"%@",[self.tracksVM coverURLForRow:indexPath.row]);
     
     //位置
     CGFloat origin = indexPath.row*80 -_viewY;
@@ -180,8 +230,19 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     userInfo[@"indexPathRow"] = indexPathRown;
     
     //专辑
-    userInfo[@"theSong"] = _tracksVM;
-    
+    if (_itemModel == historyItem) {
+        FYhistoryItem *historyItem = [[FYPlayManager sharedInstance] historyMusicItems][indexPath.row];
+        TracksViewModel *tracks = [[TracksViewModel alloc] initWithAlbumId:[_tracksVM albumIdForRow:indexPath.row] title:historyItem.albumTitle isAsc:YES];
+        [tracks getDataCompletionHandle:^(NSError *error)  {}];
+        userInfo[@"theSong"] = tracks;
+    }
+    if (_itemModel == favoritelItem) {
+
+        TracksViewModel *tracks = [[TracksViewModel alloc] initWithitemModel:favoritelItem];
+        [tracks getItemModelData:^(NSError *error) {}];
+        userInfo[@"theSong"] = tracks;
+    }
+
     [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
 
 

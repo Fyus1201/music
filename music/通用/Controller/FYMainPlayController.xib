@@ -256,6 +256,9 @@
                                 <constraint firstAttribute="width" constant="40" id="hgC-fw-MiD"/>
                             </constraints>
                             <state key="normal" image="empty_heart"/>
+                            <connections>
+                                <action selector="idiTouchFavorite:" destination="-1" eventType="touchUpInside" id="n8P-8m-ZGr"/>
+                            </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JYG-w1-fDl">
                             <rect key="frame" x="60" y="14" width="210" height="25"/>

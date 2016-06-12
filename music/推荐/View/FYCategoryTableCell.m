@@ -68,7 +68,7 @@
         
         /* 长按手势来形成按钮效果 */
         self.pressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];//用长按来做出效果
-        self.pressRecognizer.minimumPressDuration = 0.05;
+        self.pressRecognizer.minimumPressDuration = 0.2;
         
         self.pressRecognizer.delegate = self;//用来实现长按不独占
         self.pressRecognizer.cancelsTouchesInView = NO;
@@ -120,7 +120,6 @@
     
     NSString *plistPath = [[NSBundle mainBundle]pathForResource:@"categoryData" ofType:@"plist"];
     NSMutableArray *categoryArray = [[NSMutableArray alloc]initWithContentsOfFile:plistPath];
-    
     
     for (int i=0; i < categoryArray.count; i++) {
         

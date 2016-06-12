@@ -100,12 +100,14 @@
 #pragma mark - PlayView的代理方法
 - (void)playButtonDidClick:(NSInteger)index {
     
+    NSLog(@"点击事件%li",index);
     if ([[FYPlayManager sharedInstance] playerStatus]) {
         FYMainPlayController *mainPlay = [[FYMainPlayController alloc]initWithNibName:@"FYMainPlayController" bundle:nil];
 
+        
         [self presentViewController: mainPlay animated:YES completion:nil];
     }else{
-        [self showMiddleHint:@"当前没有歌曲"];
+        [self showMiddleHint:@"歌曲尚未加载"];
     }
 
 }
@@ -166,10 +168,8 @@
 }
 /** 添加通知 */
 -(void)addNotification{
-    // 开启两个通知接收,控制PlayView显示
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hidePlayView:) name:@"hidePlayView" object:nil];
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showPlayView:) name:@"showPlayView" object:nil];
-    
+    // 控制PlayView样式
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPausePlayView:) name:@"setPausePlayView" object:nil];
     // 开启一个通知接受,开始播放
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playingWithInfoDictionary:) name:@"BeginPlay" object:nil];
     //当前歌曲改变
@@ -178,15 +178,17 @@
 }
 
 #pragma mark - 消息中心
-// 隐藏图片
-- (void)hidePlayView:(NSNotification *)notification{
-    self.playView.hidden = YES;
+// 暂停图片
+- (void)setPausePlayView:(NSNotification *)notification{
+    
+    if ([[FYPlayManager sharedInstance] isPlay]) {
+        [self.playView setPlayButtonView];
+    }else{
+        [self.playView setPauseButtonView];
+    }
+    
 }
 
-// 显示图片
-- (void)showPlayView:(NSNotification *)notification{
-    self.playView.hidden = NO;
-}
 
 /** 通过播放地址 和 播放图片 */
 - (void)playingWithInfoDictionary:(NSNotification *)notification {
@@ -198,6 +200,7 @@
     _indexPathRow = [notification.userInfo[@"indexPathRow"] integerValue];
     _rowNumber = self.tracksVM.rowNumber;
     
+    [self.playView setPlayButtonView];
     
     /** 动画 */
     CGFloat y = [notification.userInfo[@"originy"] floatValue];
@@ -305,7 +308,13 @@
     FYPlayManager *playmanager = [FYPlayManager sharedInstance];
     [playmanager playWithModel:_tracksVM indexPathRow:_indexPathRow];
     
-
+    // 远程控制事件 Remote Control Event
+    // 加速计事件 Motion Event
+    // 触摸事件 Touch Event
+    // 开始监听远程控制事件
+    // 成为第一响应者（必备条件）
+    [self becomeFirstResponder];
+    
     if (timer) {
         [timer invalidate];
         timer = nil;
@@ -332,6 +341,44 @@
     [self.playView.contentIV.layer addAnimation:alphaBaseAnimation forKey:[NSString stringWithFormat:@"%ld",(long)self.playView.contentIV]];
     
 }
+
+#pragma mark - 远程控制事件监听
+- (BOOL)canBecomeFirstResponder{
+    return YES;
+}
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event{
+    
+    //    event.type; // 事件类型
+    //    event.subtype; // 事件的子类型
+    //    UIEventSubtypeRemoteControlPlay                 = 100,
+    //    UIEventSubtypeRemoteControlPause                = 101,
+    //    UIEventSubtypeRemoteControlStop                 = 102,
+    //    UIEventSubtypeRemoteControlTogglePlayPause      = 103,
+    //    UIEventSubtypeRemoteControlNextTrack            = 104,
+    //    UIEventSubtypeRemoteControlPreviousTrack        = 105,
+    //    UIEventSubtypeRemoteControlBeginSeekingBackward = 106,
+    //    UIEventSubtypeRemoteControlEndSeekingBackward   = 107,
+    //    UIEventSubtypeRemoteControlBeginSeekingForward  = 108,
+    //    UIEventSubtypeRemoteControlEndSeekingForward    = 109,
+    switch (event.subtype) {
+        case UIEventSubtypeRemoteControlPlay:
+        case UIEventSubtypeRemoteControlPause:
+            [[FYPlayManager sharedInstance] pauseMusic];
+            break;
+            
+        case UIEventSubtypeRemoteControlNextTrack:
+            [[FYPlayManager sharedInstance] nextMusic];
+            break;
+            
+        case UIEventSubtypeRemoteControlPreviousTrack:
+            [[FYPlayManager sharedInstance] previousMusic];
+            
+        default:
+            break;
+    }
+}
+
 
 # pragma mark - HUD
 

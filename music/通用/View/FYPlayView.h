@@ -22,4 +22,9 @@
 @property (nonatomic,strong) UIImageView *circleIV;
 @property (nonatomic,strong) UIImageView *contentIV;
 
+@property (nonatomic,strong) UIButton *playButton;
+/** 切换状态 */
+- (void) setPlayButtonView;
+- (void) setPauseButtonView;
+
 @end

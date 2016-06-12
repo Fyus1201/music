@@ -10,7 +10,6 @@
 
 @interface FYMyViewController : UIViewController
 
-@property (nonatomic,assign) NSInteger albumId;
-@property (nonatomic,strong) NSString *oTitle;
+@property (nonatomic) NSInteger itemModel;
 
 @end

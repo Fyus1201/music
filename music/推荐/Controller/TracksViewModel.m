@@ -9,9 +9,12 @@
 #import "TracksViewModel.h"
 #import "FYMoreNetManager.h"
 #import "DestinationModel.h"
+#import "FYPlayManager.h"
 
 @interface TracksViewModel ()
 @property (nonatomic,strong) DestinationModel *model;
+@property (nonatomic) NSInteger  itemModel;
+
 @end
 
 @implementation TracksViewModel
@@ -25,30 +28,42 @@
     return self;
 }
 
+- (instancetype)initWithitemModel:(NSInteger )itemMel {
+    if (self = [super init]) {
+        _itemModel = itemMel;
+    }
+    return self;
+}
+
 - (void)getDataCompletionHandle:(void (^)(NSError *))completed {
     self.dataTask = [FYMoreNetManager getTracksForAlbumId:_albumId mainTitle:_title idAsc:_asc completionHandle:^(DestinationModel* responseObject, NSError *error) {
         self.model = responseObject;
         completed(error);
-        
-        /*
-        NSMutableDictionary *aaa = [[NSMutableDictionary alloc] init];
-        aaa = [self.model.tracks.list[1] mj_keyValues];
-         NSMutableDictionary *aaa1 = [[NSMutableDictionary alloc] init];
-        aaa1 = [self.model.tracks.list[2] mj_keyValues];
-        NSMutableArray *zzz = [[NSMutableArray alloc] init];
-        [zzz addObject:aaa];
-        [zzz addObject:aaa1];
-        
-        NSDictionary *DTracks1 = [[NSDictionary alloc] initWithObjects:@[zzz] forKeys:@[@"list"]];
-        NSDictionary *DestinationModel1 = [[NSDictionary alloc] initWithObjects:@[DTracks1] forKeys:@[@"tracks"]];
-        
-        DestinationModel *aas = [DestinationModel mj_objectWithKeyValues:DestinationModel1];
-        
-        NSMutableDictionary *aa = [[NSMutableDictionary alloc] init];
-        
-        aa = [aas mj_keyValues];
-        NSLog(@"%@",aas.tracks.list[0].title);*/
+
     }];
+}
+
+- (void)getItemModelData:(void (^)(NSError *))completed {
+    
+    if (_itemModel == historyItem) {
+        NSArray *managerArray = [[FYPlayManager sharedInstance] historyMusicItems];
+        
+        NSDictionary *listDictionary = [[NSDictionary alloc] initWithObjects:@[managerArray] forKeys:@[@"list"]];
+        NSDictionary *tracksDictionary = [[NSDictionary alloc] initWithObjects:@[listDictionary] forKeys:@[@"tracks"]];
+        
+        _model = [DestinationModel mj_objectWithKeyValues:tracksDictionary];
+    }
+    if (_itemModel == favoritelItem) {
+        NSArray *managerArray = [[FYPlayManager sharedInstance] favoriteMusicItems];
+        
+         
+         NSDictionary *listDictionary = [[NSDictionary alloc] initWithObjects:@[managerArray] forKeys:@[@"list"]];
+         NSDictionary *tracksDictionary = [[NSDictionary alloc] initWithObjects:@[listDictionary] forKeys:@[@"tracks"]];
+         
+         _model = [DestinationModel mj_objectWithKeyValues:tracksDictionary];
+ 
+    }
+
 }
 
 #pragma mark - 返回专辑歌曲单
@@ -156,9 +171,44 @@
     }
 }
 
+/** 通过行数，返回字典 */
+- (NSDictionary *)trackForRow:(NSInteger)row{
+    
+    NSMutableDictionary *track = [[NSMutableDictionary alloc] init];
+    track = [self.model.tracks.list[row] mj_keyValues];
+
+    return [track copy];
+}
+
+/** 通过行数, 返回播放ID */
+- (NSInteger )trackIdForRow:(NSInteger)row {
+    
+    NSInteger path = self.model.tracks.list[row].trackId;
+    return path;
+}
+
+/** 通过行数, 返回专辑ID */
+- (NSInteger )albumIdForRow:(NSInteger)row {
+    
+    NSInteger path = self.model.tracks.list[row].albumId;
+    return path;
+}
+
+- (NSInteger )trackRow{
+    
+    NSInteger path = self.model.tracks.list.count;
+    return path;
+}
+
+
 #pragma mark - 返回专辑标题系列属性
 - (NSString *)albumTitle {
-    return self.model.album.title;
+    if (_itemModel == 1) {
+        return @"我的收藏";
+    }else{
+        return self.model.album.title;
+    }
+    
 }
 - (NSString *)albumPlays {
     //如果超过万，要显示*.*万
@@ -191,6 +241,5 @@
 - (NSArray *)tagsName {
     return [self.model.album.tags componentsSeparatedByString:@","];
 }
-
 
 @end
