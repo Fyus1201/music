@@ -24,7 +24,6 @@
     return self;
 }
 
-
 - (void)getDataCompletionHandle:(void (^)(NSError *))completed {
     
     self.dataTask = [FYMoreNetManager getCategoryForCategoryId:_categoryId tagName:_name pageSize:_pageSize completionHandle:^(ContentCategoryModel* responseObject, NSError *error) {

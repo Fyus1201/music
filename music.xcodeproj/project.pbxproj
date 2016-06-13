@@ -32,6 +32,8 @@
 		5F4CE8771CE38436001C0B54 /* UINavigationController+FDFullscreenPopGesture.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F4CE8761CE38436001C0B54 /* UINavigationController+FDFullscreenPopGesture.m */; };
 		5F9B3CE11D06809200B85DE2 /* FYMyViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9B3CDF1D06809200B85DE2 /* FYMyViewCell.m */; };
 		5F9B3CE41D06816200B85DE2 /* myData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F9B3CE31D06816200B85DE2 /* myData.plist */; };
+		5F9DB4781D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB4771D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m */; };
+		5F9DB47B1D0D2A8800463741 /* FYMissAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */; };
 		5FB4234D1CF5520000B8EA0E /* FYCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB4234C1CF5520000B8EA0E /* FYCategoryViewController.m */; };
 		5FB423501CF5B1A000B8EA0E /* FYSongViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB4234F1CF5B1A000B8EA0E /* FYSongViewController.m */; };
 		5FB423561CF6C30900B8EA0E /* FYTitleViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB423551CF6C30900B8EA0E /* FYTitleViewCell.m */; };
@@ -146,6 +148,10 @@
 		5F9B3CDE1D06809200B85DE2 /* FYMyViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYMyViewCell.h; sourceTree = "<group>"; };
 		5F9B3CDF1D06809200B85DE2 /* FYMyViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYMyViewCell.m; sourceTree = "<group>"; };
 		5F9B3CE31D06816200B85DE2 /* myData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = myData.plist; sourceTree = "<group>"; };
+		5F9DB4761D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYPercentDrivenInteractiveTransition.h; sourceTree = "<group>"; };
+		5F9DB4771D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYPercentDrivenInteractiveTransition.m; sourceTree = "<group>"; };
+		5F9DB4791D0D2A8800463741 /* FYMissAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYMissAnimation.h; sourceTree = "<group>"; };
+		5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYMissAnimation.m; sourceTree = "<group>"; };
 		5FB4234B1CF5520000B8EA0E /* FYCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYCategoryViewController.h; sourceTree = "<group>"; };
 		5FB4234C1CF5520000B8EA0E /* FYCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYCategoryViewController.m; sourceTree = "<group>"; };
 		5FB4234E1CF5B1A000B8EA0E /* FYSongViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYSongViewController.h; sourceTree = "<group>"; };
@@ -224,8 +230,8 @@
 		5FFCB9F61D0A837500D09E20 /* FYfavoriteItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYfavoriteItem.m; sourceTree = "<group>"; };
 		5FFCFF071CFD5CC400763315 /* NSString+FYString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FYString.m"; sourceTree = "<group>"; };
 		5FFCFF081CFD5CC400763315 /* NSString+FYString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FYString.h"; sourceTree = "<group>"; };
-		5FFCFF0A1CFDE08F00763315 /* UIView+FYAnimations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+FYAnimations.h"; path = "../通用/Controller/UIView+FYAnimations.h"; sourceTree = "<group>"; };
-		5FFCFF0B1CFDE08F00763315 /* UIView+FYAnimations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+FYAnimations.m"; path = "../通用/Controller/UIView+FYAnimations.m"; sourceTree = "<group>"; };
+		5FFCFF0A1CFDE08F00763315 /* UIView+FYAnimations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+FYAnimations.h"; path = "Controller/UIView+FYAnimations.h"; sourceTree = "<group>"; };
+		5FFCFF0B1CFDE08F00763315 /* UIView+FYAnimations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+FYAnimations.m"; path = "Controller/UIView+FYAnimations.m"; sourceTree = "<group>"; };
 		5FFCFF0E1CFF1AA000763315 /* FYMusicDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYMusicDetailCell.h; sourceTree = "<group>"; };
 		5FFCFF0F1CFF1AA000763315 /* FYMusicDetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYMusicDetailCell.m; sourceTree = "<group>"; };
 		5FFCFF111CFF2D3300763315 /* FYHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYHeaderView.h; sourceTree = "<group>"; };
@@ -303,6 +309,7 @@
 		5F3FDC731CEC803B00B28025 /* 通用 */ = {
 			isa = PBXGroup;
 			children = (
+				5F9DB4751D0D2A0300463741 /* Animation */,
 				5F3FDC911CEC922E00B28025 /* NetManager */,
 				5F3FDC741CEC803B00B28025 /* Controller */,
 				5F3FDC7E1CEC803B00B28025 /* Model */,
@@ -370,6 +377,19 @@
 			name = NetManager;
 			path = "music/通用/NetManager";
 			sourceTree = SOURCE_ROOT;
+		};
+		5F9DB4751D0D2A0300463741 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				5F9DB4761D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.h */,
+				5F9DB4771D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m */,
+				5F9DB4791D0D2A8800463741 /* FYMissAnimation.h */,
+				5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */,
+				5FFCFF0A1CFDE08F00763315 /* UIView+FYAnimations.h */,
+				5FFCFF0B1CFDE08F00763315 /* UIView+FYAnimations.m */,
+			);
+			name = Animation;
+			sourceTree = "<group>";
 		};
 		5FB423511CF6BEE100B8EA0E /* tableView2 */ = {
 			isa = PBXGroup;
@@ -539,8 +559,6 @@
 				5F4CE8761CE38436001C0B54 /* UINavigationController+FDFullscreenPopGesture.m */,
 				5FFCFF081CFD5CC400763315 /* NSString+FYString.h */,
 				5FFCFF071CFD5CC400763315 /* NSString+FYString.m */,
-				5FFCFF0A1CFDE08F00763315 /* UIView+FYAnimations.h */,
-				5FFCFF0B1CFDE08F00763315 /* UIView+FYAnimations.m */,
 				5F0F2A841CE48BED0024421B /* PrefixHeader.pch */,
 				5F11DEDE1CEA0734001890C8 /* Constants.h */,
 			);
@@ -898,6 +916,7 @@
 				5FBA3CC11CF05BFD00116802 /* DescView.m in Sources */,
 				5FB4234D1CF5520000B8EA0E /* FYCategoryViewController.m in Sources */,
 				5F4CE8771CE38436001C0B54 /* UINavigationController+FDFullscreenPopGesture.m in Sources */,
+				5F9DB4781D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m in Sources */,
 				5FBA3CC01CF05BFD00116802 /* IconNameView.m in Sources */,
 				5FBA3CD91CF062D300116802 /* iCarousel.m in Sources */,
 				5F3FDC8E1CEC803B00B28025 /* FYPlayView.m in Sources */,
@@ -912,6 +931,7 @@
 				5FBA3CE41CF1A40A00116802 /* MBProgressHUD+HR.m in Sources */,
 				5F3FDC8C1CEC803B00B28025 /* FYWebViewController.m in Sources */,
 				5FBA3CA91CF057E600116802 /* ContentsModel.m in Sources */,
+				5F9DB47B1D0D2A8800463741 /* FYMissAnimation.m in Sources */,
 				5FFCB9FA1D0A837500D09E20 /* FYfavoriteItem.m in Sources */,
 				5FBA3CAF1CF0580D00116802 /* EditorModel.m in Sources */,
 				5FB423561CF6C30900B8EA0E /* FYTitleViewCell.m in Sources */,

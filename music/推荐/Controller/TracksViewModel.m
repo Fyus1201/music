@@ -125,7 +125,7 @@
     NSInteger minutes = duration/60;
     // 秒
     NSInteger seconds = (NSInteger)duration%60;
-    return [NSString stringWithFormat:@"%02ld:%02ld",(long)minutes,seconds];
+    return [NSString stringWithFormat:@"%02ld:%02ld",(long)minutes,(long)seconds];
 }
 /** 通过行数, 返回评论数 */
 - (NSString *)commentCountForRow:(NSInteger)row {

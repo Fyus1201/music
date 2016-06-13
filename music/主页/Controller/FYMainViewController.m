@@ -119,7 +119,7 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     FYWebViewController *web0 = [[FYWebViewController alloc]init];
-    NSURL *weburl = [[NSURL alloc]initWithString:@"https://www.baidu.com"];
+    NSURL *weburl = [[NSURL alloc]initWithString:@"http://sandbox.runjs.cn/show/fn9ltuif"];
     web0.URL = weburl;
     NSLog(@"%@",weburl);
     [self.navigationController pushViewController:web0 animated:YES];//1.点击，相应跳转

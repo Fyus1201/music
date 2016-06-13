@@ -230,7 +230,7 @@
 }
 
 - (void)dealloc {
-    NSLog(@"dealloc");
+    NSLog(@"song dealloc");
 }
 
 @end

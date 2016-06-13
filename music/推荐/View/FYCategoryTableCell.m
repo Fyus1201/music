@@ -67,10 +67,10 @@
         }];
         
         /* 长按手势来形成按钮效果 */
-        self.pressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];//用长按来做出效果
+        self.pressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
         self.pressRecognizer.minimumPressDuration = 0.2;
         
-        self.pressRecognizer.delegate = self;//用来实现长按不独占
+        self.pressRecognizer.delegate = self;
         self.pressRecognizer.cancelsTouchesInView = NO;
         
         [self addGestureRecognizer:self.pressRecognizer];
@@ -80,7 +80,7 @@
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
     
-    return YES;//长按手势会独占对象，故用代理将他取消独占
+    return YES;
 }
 
 -(void)longPress:(UITapGestureRecognizer *)sender{

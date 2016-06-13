@@ -18,8 +18,12 @@
 #import "FYPlayView.h"//播放图标
 #import "FYPlayManager.h"//播放器
 
-@interface FYBarController ()<PlayViewDelegate,UINavigationControllerDelegate>
+#import "FYPercentDrivenInteractiveTransition.h"
+#import "FYMissAnimation.h"
 
+@interface FYBarController ()<PlayViewDelegate,UINavigationControllerDelegate,UIViewControllerTransitioningDelegate>
+
+@property (nonatomic,strong) FYPercentDrivenInteractiveTransition *interactiveTransition;
 @property (nonatomic,strong) TracksViewModel *tracksVM;
 
 @property (nonatomic,assign) NSInteger indexPathRow;
@@ -100,26 +104,40 @@
 #pragma mark - PlayView的代理方法
 - (void)playButtonDidClick:(NSInteger)index {
     
-    NSLog(@"点击事件%li",index);
+    NSLog(@"点击事件%li",(long)index);
     if ([[FYPlayManager sharedInstance] playerStatus]) {
         FYMainPlayController *mainPlay = [[FYMainPlayController alloc]initWithNibName:@"FYMainPlayController" bundle:nil];
 
+        /** 自定义切换，存在问题 */
+        //_interactiveTransition = [[FYPercentDrivenInteractiveTransition alloc]init:mainPlay];
+        //mainPlay.transitioningDelegate = self;
         
         [self presentViewController: mainPlay animated:YES completion:nil];
     }else{
+        if ([[FYPlayManager sharedInstance] havePlay]) {
+            [self showMiddleHint:@"加载中"];
+        }else
         [self showMiddleHint:@"歌曲尚未加载"];
     }
 
 }
 
+-(id<UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
+    return [[FYMissAnimation alloc]init];
+}
+
+-(id<UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id<UIViewControllerAnimatedTransitioning>)animator {
+    return (_interactiveTransition.isInteracting ? _interactiveTransition : nil);
+}
+
 - (void)navigationController:(UINavigationController *)navigationController
       willShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated{
-    
+
     if (viewController.hidesBottomBarWhenPushed) {
-        
+
         if(self.tabBar.frame.origin.y == [[UIScreen mainScreen] bounds].size.height - 49){
-            
+ 
             [UIView animateWithDuration:0.2
                              animations:^{
                                  CGRect tabFrame = self.tabBar.frame;
@@ -133,6 +151,7 @@
     } else {
 
     }
+
 }
 - (void)navigationController:(UINavigationController *)navigationController
        didShowViewController:(UIViewController *)viewController
@@ -150,13 +169,14 @@
                                  tabFrame.origin.y += -49;
                                  self.tabBar.frame = tabFrame;
                              }];
-            
             self.tabBar.hidden = NO;
 
         }
         //self.playView.hidden = YES;
     }
     [super.view bringSubviewToFront:self.playView];
+    //NSLog(@"%@",self.playView.superview);
+
 }
 
 - (void)hideTabBar {
@@ -399,6 +419,8 @@
     // 关闭消息中心
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[FYPlayManager sharedInstance] releasePlayer];
+    
+    NSLog(@"play dealloc");
 }
 
 

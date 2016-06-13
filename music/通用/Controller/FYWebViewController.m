@@ -82,8 +82,8 @@
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = NO;
     self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     // 添加KVO监听
-    
     [self.webView addObserver:self
                    forKeyPath:@"loading"
                       options:NSKeyValueObservingOptionNew

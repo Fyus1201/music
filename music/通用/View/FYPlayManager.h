@@ -63,6 +63,7 @@ typedef NS_ENUM(NSInteger, itemModel) {
 - (UIImage *)playCoverImage;
 
 - (BOOL)hasBeenFavoriteMusic;
+- (BOOL)havePlay;
 
 - (NSArray *)favoriteMusicItems;
 - (NSArray *)historyMusicItems;

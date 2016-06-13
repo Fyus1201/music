@@ -33,7 +33,6 @@ static AFHTTPSessionManager *manager = nil;
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"GET ERROR: %@",error.userInfo);
     }];
-   
 }
 
 + (id)POST:(NSString *)path parameters:(NSDictionary *)params complationHandle:(void (^)(id, NSError *))completed {

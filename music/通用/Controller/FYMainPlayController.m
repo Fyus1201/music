@@ -69,6 +69,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self adapterIphone4];
+    [self addPanRecognizer];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -131,7 +132,12 @@
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     
-    
+}
+
+- (void)addPanRecognizer {
+    UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(closePlay:)];
+    swipeRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:swipeRecognizer];
 }
 
 #pragma mark - KVO
@@ -396,7 +402,7 @@
 - (void)dealloc{
 
     [self removeObserverFromPlayer:_playmanager.player];
-    NSLog(@"dealloc");
+    NSLog(@"main dealloc");
 }
 
 @end

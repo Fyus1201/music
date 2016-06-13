@@ -26,45 +26,41 @@
     [super viewDidLoad];
     // 启动开启上拉刷新
     [self.tableView.mj_header beginRefreshing];
+    self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
 }
 
 #pragma mark - 入出 设置
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated{
+    
     [super viewWillAppear:animated];
-    self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
     //self.navigationController.navigationBar = nil;
     
     [self setupNav];
     
 }
 
--(void)setupNav
-{
-    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
-
-    self.navigationItem.title = self.keyName;
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated{
+    
     [super viewDidAppear:animated];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    
+    self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
 }
 
 
-- (void)viewDidDisappear:(BOOL)animated
-{
+- (void)viewDidDisappear:(BOOL)animated{
+    
     [super viewDidDisappear:animated];
-    
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
+-(void)viewWillDisappear:(BOOL)animated{
+    
     [super viewWillDisappear:animated];
+}
+
+-(void)setupNav{
     
-    
+    self.navigationController.navigationBar.barTintColor = [UIColor whiteColor];
+    self.navigationItem.title = self.keyName;
 }
 
 #pragma mark - UITableView代理方法
