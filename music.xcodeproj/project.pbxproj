@@ -34,6 +34,7 @@
 		5F9B3CE41D06816200B85DE2 /* myData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F9B3CE31D06816200B85DE2 /* myData.plist */; };
 		5F9DB4781D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB4771D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m */; };
 		5F9DB47B1D0D2A8800463741 /* FYMissAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */; };
+		5F9DB50A1D0FF25200463741 /* FYPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB5091D0FF25200463741 /* FYPickerView.m */; };
 		5FB4234D1CF5520000B8EA0E /* FYCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB4234C1CF5520000B8EA0E /* FYCategoryViewController.m */; };
 		5FB423501CF5B1A000B8EA0E /* FYSongViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB4234F1CF5B1A000B8EA0E /* FYSongViewController.m */; };
 		5FB423561CF6C30900B8EA0E /* FYTitleViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB423551CF6C30900B8EA0E /* FYTitleViewCell.m */; };
@@ -152,6 +153,8 @@
 		5F9DB4771D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYPercentDrivenInteractiveTransition.m; sourceTree = "<group>"; };
 		5F9DB4791D0D2A8800463741 /* FYMissAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYMissAnimation.h; sourceTree = "<group>"; };
 		5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYMissAnimation.m; sourceTree = "<group>"; };
+		5F9DB5081D0FF25200463741 /* FYPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYPickerView.h; sourceTree = "<group>"; };
+		5F9DB5091D0FF25200463741 /* FYPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYPickerView.m; sourceTree = "<group>"; };
 		5FB4234B1CF5520000B8EA0E /* FYCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYCategoryViewController.h; sourceTree = "<group>"; };
 		5FB4234C1CF5520000B8EA0E /* FYCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYCategoryViewController.m; sourceTree = "<group>"; };
 		5FB4234E1CF5B1A000B8EA0E /* FYSongViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYSongViewController.h; sourceTree = "<group>"; };
@@ -362,6 +365,8 @@
 				5F3FDC851CEC803B00B28025 /* LeftView.m */,
 				5FBA3CE51CF43CC100116802 /* MusicSlider.h */,
 				5FBA3CE61CF43CC100116802 /* MusicSlider.m */,
+				5F9DB5081D0FF25200463741 /* FYPickerView.h */,
+				5F9DB5091D0FF25200463741 /* FYPickerView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -901,6 +906,7 @@
 				5F0F2A731CE441DF0024421B /* UIScrollView+ElasticRefresh.m in Sources */,
 				5FBA3C8E1CF0519D00116802 /* MoreCategoryViewModel.m in Sources */,
 				5FBA3C9D1CF0528900116802 /* ContentCategoryModel.m in Sources */,
+				5F9DB50A1D0FF25200463741 /* FYPickerView.m in Sources */,
 				5FB423591CF6D46B00B8EA0E /* FYCategoryTableCell.m in Sources */,
 				5F3FDC8D1CEC803B00B28025 /* FYNAKPlaybackIndicatorView.m in Sources */,
 				5FB423501CF5B1A000B8EA0E /* FYSongViewController.m in Sources */,

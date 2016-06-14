@@ -13,6 +13,7 @@
 @property (nonatomic, strong) UITableView *tableView;
 
 @end
+
 @implementation LeftView
 
 
@@ -120,6 +121,33 @@
     
 
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    switch (indexPath.section) {
+        case 0:
+            
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            
+            break;
+        case 3:
+            
+            break;
+        case 4:
+            
+            break;
+        case 5:
+
+            break;
+        case 6:
+            
+            break;
+        default:
+            
+            break;
+    }
     
 }
 

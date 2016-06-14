@@ -26,12 +26,14 @@
 /** 详情页 */
 #import "FYSongViewController.h"
 
+#import "FYPickerView.h"
 
 
+@interface FYTuiViewController ()<UIScrollViewDelegate,UITableViewDelegate,UITableViewDataSource,FYPickerViewDelegate>
 
-@interface FYTuiViewController ()<UIScrollViewDelegate,UITableViewDelegate,UITableViewDataSource>
-
-@property(nonatomic,strong)FYTuiScrollView *scroll;
+@property(nonatomic,strong) FYTuiScrollView *scroll;
+@property (strong, nonatomic) FYPickerView *pickerView;
+@property(nonatomic,strong)UIView *backView;//蒙版
 
 @property(nonatomic,strong)UIButton *button0;
 @property(nonatomic,strong)UIButton *button1;
@@ -479,9 +481,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
             }
             
-            
-            [cell.imageView sd_setImageWithURL:[self.moreVM coverURLForIndexPath:indexPath] placeholderImage:[UIImage imageNamed:@"find_albumcell_cover_bg"]];
-            
+            cell.imageView.image = [UIImage imageNamed:@"music_tuijian"];
             cell.textLabel.text = [self.moreVM titleForIndexPath:indexPath];
             cell.detailTextLabel.text = [self.moreVM subTitleForIndexPath:indexPath];
             cell.detailTextLabel.font = [UIFont systemFontOfSize:14];
@@ -538,6 +538,62 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             myView.itemModel = historyItem;
             [self.navigationController pushViewController:myView animated:YES];
             
+        }else if(indexPath.section == 2){
+            
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"确定清除缓存吗" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+            UIAlertAction* defaultAction0 = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive
+                                                                  handler:^(UIAlertAction * action) {
+                                                                      [self alertTextFiledDidChanged];
+                                                                  }];
+            UIAlertAction* defaultAction1 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel
+                                                                  handler:^(UIAlertAction * action) {
+                                                                      
+                                                                  }];
+            
+            [alert addAction:defaultAction0];
+            [alert addAction:defaultAction1];
+            
+            [self presentViewController:alert animated:YES completion:nil];
+            
+        }else if(indexPath.section == 3){
+
+            [_pickerView removeFromSuperview];
+            [_backView removeFromSuperview];
+            UIWindow *window = [UIApplication sharedApplication].keyWindow;
+            self.pickerView = [[FYPickerView alloc] initWithFrame:CGRectMake(s_WindowW/2-140, s_WindowH+200, 280, 200)];
+            self.backView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, s_WindowW, s_WindowH)];
+            _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6];
+            self.pickerView.delegate = self;
+            [window addSubview:self.backView];
+            [window addSubview:self.pickerView];
+            
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            [UIView beginAnimations:nil context:context];
+            [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+            [UIView setAnimationDuration:0.6];//动画时间长度，单位秒，浮点数
+            [self.view exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
+            self.pickerView.frame = CGRectMake(s_WindowW/2-140, s_WindowH/2-100, 280, 200);
+            
+            [UIView setAnimationDelegate:self];
+            [UIView commitAnimations];
+            
+            
+        }else if(indexPath.section == 4){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"XX音乐" message:@"本应用旨在技术分享，请勿用于商业用途" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
+                                                                  handler:^(UIAlertAction * action) {}];
+            
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }else if(indexPath.section == 5){
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"开发者" message:@"寿煜宇\n联系邮箱：fyus1201@icloud.com" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
+                                                                  handler:^(UIAlertAction * action) {
+                                                                      
+                                                                  }];
+            
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
 
     }else if(tableView.tag == 101){
@@ -561,6 +617,33 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
 }
 
+- (void)alertTextFiledDidChanged{
+
+        MBProgressHUD *hud = [[MBProgressHUD alloc] init];
+        [self.view addSubview:hud];
+        //加载条上显示文本
+        hud.labelText = @"正在清理中";
+        //设置对话框样式
+        hud.mode = MBProgressHUDModeDeterminate;
+        [hud showAnimated:YES whileExecutingBlock:^{
+            while (hud.progress < 1.0) {
+                hud.progress += 0.01;
+                [NSThread sleepForTimeInterval:0.02];
+            }
+            hud.labelText = @"清理完成";
+        } completionBlock:^{
+            //清除本地
+            //清除caches文件下所有文件
+            //[CleanCaches clearSubfilesWithFilePath:[CleanCaches CachesDirectory]];
+            //清除内存
+            [[SDImageCache sharedImageCache] clearMemory];
+            [self.tableView0 reloadData];
+            [self.tableView1 reloadData];
+            [self.tableView2 reloadData];
+            [hud removeFromSuperview];
+        }];
+}
+
 /** 跳转 */
 - (void)didSelectFocusImages2:(NSInteger )index{
     
@@ -574,6 +657,44 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     vc.keyName = @"榜单";
     
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+/** 接收 */
+-(void)didSelectedFYPickerView:(NSInteger)index time:(NSInteger)time{
+    
+    if (index == (long)102) {
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [UIView beginAnimations:nil context:context];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        [UIView setAnimationDuration:0.6];//动画时间长度，单位秒，浮点数
+        [self.view exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
+        self.pickerView.frame = CGRectMake(s_WindowW/2-140, s_WindowH+200, 280, 200);
+        
+        [UIView setAnimationDelegate:self];
+        // 动画完毕后调用animationFinished
+        [UIView setAnimationDidStopSelector:@selector(animationFinished)];
+        [UIView commitAnimations];
+        
+    }
+    if (index == (long)101) {//取消
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [UIView beginAnimations:nil context:context];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        [UIView setAnimationDuration:0.6];//动画时间长度，单位秒，浮点数
+        self.pickerView.frame = CGRectMake(s_WindowW/2-140, s_WindowH+200, 280, 200);
+        
+        [UIView setAnimationDelegate:self];
+        // 动画完毕后调用animationFinished
+        [UIView setAnimationDidStopSelector:@selector(animationFinished)];
+        [UIView commitAnimations];
+        
+    }
+}
+
+-(void)animationFinished{
+    NSLog(@"动画结束!");
+    [_pickerView removeFromSuperview];
+    [_backView removeFromSuperview];
 }
 
 #pragma mark - 懒加载

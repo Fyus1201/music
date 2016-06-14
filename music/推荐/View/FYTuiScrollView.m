@@ -48,6 +48,7 @@
     self.pan.edges = UIRectEdgeLeft;//左侧
     [self addGestureRecognizer:self.pan];
     [self.panGestureRecognizer requireGestureRecognizerToFail:self.pan];
+    
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
