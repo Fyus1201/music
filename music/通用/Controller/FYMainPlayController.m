@@ -137,7 +137,7 @@
 - (void)addPanRecognizer {
     UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(closePlay:)];
     swipeRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:swipeRecognizer];
+    //[self.view addGestureRecognizer:swipeRecognizer];
 }
 
 #pragma mark - KVO

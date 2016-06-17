@@ -12,6 +12,4 @@
 
 @property (nonatomic, strong) NSDictionary *act;
 
-
-
 @end

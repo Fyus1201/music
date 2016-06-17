@@ -20,6 +20,7 @@
 @property (nonatomic, strong) UIScrollView *bindingScrollView;
 @property (nonatomic, assign) CGFloat offSet_Y;
 @property (nonatomic, assign, getter = isEndAnimation) BOOL endAniamtion;
+@property (nonatomic, assign) BOOL isCan;
 @property (nonatomic, strong) CAShapeLayer *elasticShaperLayer;
 @property (nonatomic, strong) PMBallLayer *ballLayer;
 @property (nonatomic, strong) PMLineLayer *lineLayer;
@@ -32,6 +33,7 @@
 
 - (void)dealloc {
     
+    NSLog(@"dealloc PMElasticView");
     [self.bindingScrollView removeObserver:self forKeyPath:CONTENTOFFSET_KEYPATH];
 }
 
@@ -60,12 +62,17 @@
     
     self.lineLayer = [[PMLineLayer alloc] initWithSize:CGSizeMake(40, 40) StrokeColor:[UIColor whiteColor] animationHeight:ABS(AnimationDISTANCE)];
     [self.elasticShaperLayer addSublayer:self.lineLayer];//外圈
+    
+    self.endAniamtion = YES;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
 
     
     if ([keyPath isEqualToString:CONTENTOFFSET_KEYPATH] && [object isKindOfClass:[UIScrollView class]]) {
+ 
+        [self.timer invalidate];
+        
         self.offSet_Y = self.bindingScrollView.contentOffset.y + NavigationHeight;
         
         self.frame = CGRectMake(0, self.offSet_Y >= 0 ? 0 : self.offSet_Y, self.bindingScrollView.bounds.size.width, self.offSet_Y >=0 ? 0 : ABS(self.offSet_Y));
@@ -77,8 +84,13 @@
             self.endAniamtion = NO;
         }
         [self changeScrollViewProperty];
-    }
 
+        if (self.offSet_Y == -80) {
+            _isCan = YES;
+        }else{
+             _isCan = NO;
+        }
+    }
 }
 
 - (void)changeScrollViewProperty {
@@ -92,6 +104,7 @@
             [self elasticLayerAnimation];
         }
     } else {
+        
         self.ballLayer.hidden = YES;
         self.lineLayer.hidden = YES;
         [self.elasticShaperLayer removeAllAnimations];
@@ -163,6 +176,7 @@
     [self.ballLayer endAnimation];
     [self.lineLayer endAnimation];
     [self.bindingScrollView setContentOffset:CGPointMake(0, -NavigationHeight) animated:YES];
+    
 }
 - (void)startRefresh {//开始
     
@@ -171,16 +185,17 @@
 
 #pragma mark - timer方法
 /** 添加定时器*/
--(void)addTimer
-{
+-(void)addTimer{
+    
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(nextEnd) userInfo:nil repeats:NO];
-    //多线程 UI IOS程序默认只有一个主线程，处理UI的只有主线程。如果拖动第二个UI，则第一个UI事件则会失效。
     [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
 }
 
--(void)nextEnd
-{
-    [self endRefresh];
+-(void)nextEnd{
+
+    if (_isCan == YES) {
+        [self endRefresh];
+    }
 }
 
 @end

@@ -1,9 +1,9 @@
 //
 //  TracksViewModel.m
-//  喜马拉雅FM(高仿品)
+//  music
 //
-//  Created by apple-jd33 on 15/11/26.
-//  Copyright © 2015年 HansRove. All rights reserved.
+//  Created by 寿煜宇 on 16/5/18.
+//  Copyright © 2016年 Fyus. All rights reserved.
 //
 
 #import "TracksViewModel.h"
@@ -174,8 +174,7 @@
 /** 通过行数，返回字典 */
 - (NSDictionary *)trackForRow:(NSInteger)row{
     
-    NSMutableDictionary *track = [[NSMutableDictionary alloc] init];
-    track = [self.model.tracks.list[row] mj_keyValues];
+    NSMutableDictionary *track = [self.model.tracks.list[row] mj_keyValues];
 
     return [track copy];
 }

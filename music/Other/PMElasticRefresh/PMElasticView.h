@@ -15,6 +15,7 @@ typedef void(^PMRefreshBlock)(void);
 
 - (void)endRefresh;
 - (void)startRefresh;
+
 -(void)addTimer;
 
 @property (nonatomic, copy) PMRefreshBlock refreshBlock;

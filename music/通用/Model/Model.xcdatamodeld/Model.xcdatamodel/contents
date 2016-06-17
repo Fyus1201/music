@@ -50,6 +50,7 @@
         <attribute name="duration" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="isPublic" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="likes" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="musicRow" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="opType" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="orderingValue" optional="YES" attributeType="Double" defaultValueString="0" syncable="YES"/>
@@ -70,6 +71,6 @@
     </entity>
     <elements>
         <element name="FYfavoriteItem" positionX="-54" positionY="-9" width="128" height="525"/>
-        <element name="FYhistoryItem" positionX="-27" positionY="171" width="128" height="525"/>
+        <element name="FYhistoryItem" positionX="-27" positionY="171" width="128" height="540"/>
     </elements>
 </model>

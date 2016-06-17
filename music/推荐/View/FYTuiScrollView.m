@@ -136,8 +136,8 @@
         _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:alpha];
     }
     
-    if (panGes.state == UIGestureRecognizerStateEnded)
-    {
+    if (panGes.state == UIGestureRecognizerStateEnded){
+        
         if (point.x <= showLeftViewMaxWidth) {
             
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -148,8 +148,8 @@
                 [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
             }];
             
-        }else if (point.x > showLeftViewMaxWidth && point.x <= maxWidth)
-        {
+        }else if (point.x > showLeftViewMaxWidth && point.x <= maxWidth){
+            
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(0, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
@@ -176,24 +176,25 @@
     }
     
     if (ges.state == UIGestureRecognizerStateEnded){
-        
-        if ( - point.x <= showLeftViewMaxWidth) {
+
+        if (  -point.x <= 50) {
             
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(0, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
             } completion:^(BOOL finished) {
-                
+
             }];
             
-        }else if ( - point.x > showLeftViewMaxWidth &&  - point.x <= maxWidth)
-        {
+        }else{
+            
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
             } completion:^(BOOL finished) {
                 [_backView removeFromSuperview];
                 [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+
             }];
         }
     }
@@ -207,6 +208,7 @@
         _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
         
     } completion:^(BOOL finished) {
+        
         self.pan.enabled = YES;
         [_backView removeFromSuperview];
         [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;

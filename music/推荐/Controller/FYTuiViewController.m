@@ -559,10 +559,11 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
 
             [_pickerView removeFromSuperview];
             [_backView removeFromSuperview];
+            
             UIWindow *window = [UIApplication sharedApplication].keyWindow;
             self.pickerView = [[FYPickerView alloc] initWithFrame:CGRectMake(s_WindowW/2-140, s_WindowH+200, 280, 200)];
             self.backView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, s_WindowW, s_WindowH)];
-            _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.6];
+            self.backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.0];
             self.pickerView.delegate = self;
             [window addSubview:self.backView];
             [window addSubview:self.pickerView];
@@ -573,6 +574,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             [UIView setAnimationDuration:0.6];//动画时间长度，单位秒，浮点数
             [self.view exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
             self.pickerView.frame = CGRectMake(s_WindowW/2-140, s_WindowH/2-100, 280, 200);
+            self.backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:self.pickerView.frame.origin.y/s_WindowH];
             
             [UIView setAnimationDelegate:self];
             [UIView commitAnimations];
@@ -632,9 +634,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             }
             hud.labelText = @"清理完成";
         } completionBlock:^{
-            //清除本地
-            //清除caches文件下所有文件
-            //[CleanCaches clearSubfilesWithFilePath:[CleanCaches CachesDirectory]];
             //清除内存
             [[SDImageCache sharedImageCache] clearMemory];
             [self.tableView0 reloadData];
@@ -669,7 +668,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
         [UIView setAnimationDuration:0.6];//动画时间长度，单位秒，浮点数
         [self.view exchangeSubviewAtIndex:0 withSubviewAtIndex:1];
         self.pickerView.frame = CGRectMake(s_WindowW/2-140, s_WindowH+200, 280, 200);
-        
+        self.backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:(s_WindowH+200-self.pickerView.frame.origin.y)/s_WindowH];
         [UIView setAnimationDelegate:self];
         // 动画完毕后调用animationFinished
         [UIView setAnimationDidStopSelector:@selector(animationFinished)];
@@ -682,7 +681,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         [UIView setAnimationDuration:0.6];//动画时间长度，单位秒，浮点数
         self.pickerView.frame = CGRectMake(s_WindowW/2-140, s_WindowH+200, 280, 200);
-        
+        self.backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:(s_WindowH+200-self.pickerView.frame.origin.y)/s_WindowH];
         [UIView setAnimationDelegate:self];
         // 动画完毕后调用animationFinished
         [UIView setAnimationDidStopSelector:@selector(animationFinished)];
@@ -692,7 +691,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
 }
 
 -(void)animationFinished{
-    NSLog(@"动画结束!");
+    NSLog(@"定时开始!");
     [_pickerView removeFromSuperview];
     [_backView removeFromSuperview];
 }

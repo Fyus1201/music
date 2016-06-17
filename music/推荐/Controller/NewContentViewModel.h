@@ -1,20 +1,18 @@
 //
-//  MoreCategoryViewModel.h
+//  NewContentViewModel.h
 //  music
 //
-//  Created by 寿煜宇 on 16/5/18.
+//  Created by 寿煜宇 on 16/6/14.
 //  Copyright © 2016年 Fyus. All rights reserved.
 //
 
 #import "BaseViewModel.h"
 
-@interface MoreCategoryViewModel : BaseViewModel
+@interface NewContentViewModel : BaseViewModel
 
 /**  VM初始化,通过获取外界数据,进行网络加载 */
 
-- (instancetype)initWithCategoryId:(NSInteger)categoryId tagName:(NSString *)name;
-@property (nonatomic,strong) NSString *name;
-@property (nonatomic,assign) NSInteger categoryId;
+- (instancetype)init;
 
 // 最大显示行数
 @property (nonatomic,assign) NSInteger pageSize;
@@ -30,9 +28,14 @@
 /**  通过分组数, 获取集数*/
 - (NSString *)tracksForRow:(NSInteger)row;
 
+/**  通过分组数, 获取(trackTitle)*/
+- (NSString *)trackTitleForRow:(NSInteger)row;
 /**  通过分组数, 获取标题(title)*/
 - (NSString *)titleForRow:(NSInteger)row;
 /**  通过分组数, 获取分类Id */
 - (NSInteger)albumIdForRow:(NSInteger)row;
+
+/**  通过分组数, 获取url*/
+- (NSURL *)urlForRow:(NSInteger)row;
 
 @end

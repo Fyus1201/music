@@ -19,7 +19,7 @@
         [backView mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.bottom.mas_equalTo(0);
-            make.width.mas_equalTo([[UIScreen mainScreen] bounds].size.width/3);
+            make.width.mas_equalTo(s_WindowW/3);
             make.height.mas_equalTo(49);
             
             make.right.equalTo(self).with.offset(0);
@@ -52,7 +52,7 @@
         [self.playButton addTarget:self action:@selector(touchPlayButton:) forControlEvents:UIControlEventTouchUpInside];
         
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(OnTapBackView:)];
-        _circleIV.tag = 200;
+        _circleIV.tag = 100;
         [_circleIV addGestureRecognizer:tap];
         
         // 设置circle的用户交互

@@ -19,6 +19,7 @@
 
 @property (nonatomic, strong) UITableView *mainTableView;
 @property (nonatomic,strong) TracksViewModel *tracksVM;
+@property (nonatomic,strong) NSArray *historyItems;
 
 @end
 
@@ -45,6 +46,11 @@
     [super viewWillAppear:animated];
     self.hidesBottomBarWhenPushed = YES;//隐藏 tabBar 在navigationController结构中
 
+    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    if (_itemModel == 0) {
+        self.historyItems = [[FYPlayManager sharedInstance] historyMusicItems];
+    }
+    
     [self.tracksVM getItemModelData:^(NSError *error) {
         [self.mainTableView reloadData];
     }];
@@ -224,30 +230,34 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     userInfo[@"originy"] = originy;
 
     
-    
-    NSInteger indexPathRow = indexPath.row;
-    NSNumber *indexPathRown = [[NSNumber alloc]initWithInteger:indexPathRow];
-    userInfo[@"indexPathRow"] = indexPathRown;
-    
     //专辑
     if (_itemModel == historyItem) {
-        FYhistoryItem *historyItem = [[FYPlayManager sharedInstance] historyMusicItems][indexPath.row];
+        
+        FYhistoryItem *historyItem = _historyItems[indexPath.row];
         TracksViewModel *tracks = [[TracksViewModel alloc] initWithAlbumId:[_tracksVM albumIdForRow:indexPath.row] title:historyItem.albumTitle isAsc:YES];
         [tracks getDataCompletionHandle:^(NSError *error)  {}];
         userInfo[@"theSong"] = tracks;
+        
+        NSNumber *musicRow = [[NSNumber alloc]initWithInteger:historyItem.musicRow];
+        userInfo[@"indexPathRow"] = musicRow;
+        
+        NSLog(@"%@",historyItem.albumTitle);
+
+        
     }
     if (_itemModel == favoritelItem) {
 
         TracksViewModel *tracks = [[TracksViewModel alloc] initWithitemModel:favoritelItem];
         [tracks getItemModelData:^(NSError *error) {}];
         userInfo[@"theSong"] = tracks;
+        
+        NSInteger indexPathRow = indexPath.row;
+        NSNumber *indexPathRown = [[NSNumber alloc]initWithInteger:indexPathRow];
+        userInfo[@"indexPathRow"] = indexPathRown;
     }
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
 
-
 }
-
-
 
 @end

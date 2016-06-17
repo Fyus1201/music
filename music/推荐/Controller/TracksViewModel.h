@@ -1,9 +1,9 @@
 //
-//  TracksViewModel.h
-//  喜马拉雅FM(高仿品)
+//  TracksViewModel.m
+//  music
 //
-//  Created by apple-jd33 on 15/11/26.
-//  Copyright © 2015年 HansRove. All rights reserved.
+//  Created by 寿煜宇 on 16/5/18.
+//  Copyright © 2016年 Fyus. All rights reserved.
 //
 
 #import "BaseViewModel.h"

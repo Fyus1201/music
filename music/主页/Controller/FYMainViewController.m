@@ -11,21 +11,29 @@
 #import "PMElasticRefresh.h"
 #import "LeftView.h"
 
+#import "NewContentViewModel.h"
+#import "TracksViewModel.h"
 #import "FYWebViewController.h"
+#import "FYMainTableViewCell.h"
+
+#import "FYPlayManager.h"
 
 #define showLeftViewMaxWidth 10 //拖拽距离
 #define maxWidth 240 //宽
 
-@interface FYMainViewController ()<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate>
+@interface FYMainViewController ()<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate,FYMainTableViewDelegate>
 {
     CGPoint initialPosition;     //初始位置
-    BOOL led;
 }
 @property(nonatomic,strong)LeftView *leftView;
 @property(nonatomic,strong)UIView *backView;//蒙版
 @property (nonatomic, strong) UITableView *mainTableView;
 
 @property(nonatomic)UIScreenEdgePanGestureRecognizer *pan;
+@property (nonatomic,strong) NewContentViewModel *contentVM;
+
+@property (nonatomic) NSInteger tableInteger;
+@property (nonatomic) NSInteger playInteger;
 
 @end
 
@@ -35,19 +43,24 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0];
-    
 
     [self initNav];
     [self initMainTableView];
     [self addGestureRecognizer];
+    
+    [self.contentVM getDataCompletionHandle:^(NSError *error) {
+        [self.mainTableView reloadData];
+    }];
+    [self.mainTableView reloadData];
+
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated{
+
     [super viewDidAppear:animated];
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     
@@ -81,22 +94,39 @@
 #pragma mark - 表格+下拉动画
 - (void)initMainTableView{
     
-    self.mainTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, s_WindowW, s_WindowH) style:UITableViewStylePlain];
+    self.mainTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, s_WindowW, s_WindowH - 29) style:UITableViewStyleGrouped];
     
+    [self.mainTableView pm_RefreshHeaderWithBlock:^{
+        [self.contentVM getDataCompletionHandle:^(NSError *error) {
+            [self.mainTableView reloadData];
+            [self.mainTableView endRefresh];
+        }];
+    }];
     self.mainTableView.delegate = self;
     self.mainTableView.dataSource = self;
-    
-    led = NO;
+    [self.mainTableView  setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+    [self.mainTableView registerClass:[FYMainTableViewCell class] forCellReuseIdentifier:@"MCell000"];
 
-    [self.mainTableView pm_RefreshHeaderWithBlock:^{
-        
-    }];
     [self.view addSubview:self.mainTableView];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(delTableInteger:) name:@"dejTableInteger" object:nil];
+}
+
+- (void)delTableInteger:(NSNotification *)notification {
+    
+    _tableInteger = 0;
+    
+    if (_playInteger > 0) {
+        NSIndexSet *tableIndexSet=[[NSIndexSet alloc]initWithIndex:_playInteger - 1];
+        [self.mainTableView reloadSections:tableIndexSet withRowAnimation:UITableViewRowAnimationAutomatic];//局部刷新
+    }
+    _playInteger = 0;
+
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     
-    return 10;
+    return [self.contentVM rowNumber];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -104,25 +134,96 @@
     return 1;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView
+heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+
+    return s_WindowW * 1.2;
+    
+}
+
+// 组头高
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    
+    if (section == 0) {
+        return 0.0001;
+    }
+    return 10;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    static NSString *cellID = @"cell0";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-    if (cell == nil)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+    FYMainTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"MCell000"];
+    
+    [cell.coverIV sd_setImageWithURL:[self.contentVM coverURLForRow:indexPath.section] placeholderImage:[UIImage imageNamed:@"album_cover_bg"]];
+    cell.titleLb.text = [self.contentVM trackTitleForRow:indexPath.section];
+    cell.tagInt = indexPath.section;
+    cell.delegate = self;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    if (indexPath.section == _tableInteger-1) {
+        cell.isPlay = YES;
+    }else{
+        cell.isPlay = NO;
     }
-    cell.textLabel.text = @"你好啊";
     return cell;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+
+}
+
+- (void)mainTableViewDidClick:(NSInteger)tag{
     
-    FYWebViewController *web0 = [[FYWebViewController alloc]init];
-    NSURL *weburl = [[NSURL alloc]initWithString:@"http://sandbox.runjs.cn/show/fn9ltuif"];
-    web0.URL = weburl;
-    NSLog(@"%@",weburl);
-    [self.navigationController pushViewController:web0 animated:YES];//1.点击，相应跳转
+    if (tag >= 2000) {
+        NSInteger tableTag = tag - 2000;
+        NSInteger oldtableTag = _tableInteger;
+        
+        if (_tableInteger == tableTag + 1) {
+            _tableInteger = 0;
+            [[FYPlayManager sharedInstance] pauseMusic];
+        }else{
+            _tableInteger = tableTag + 1;
+            
+            if (_playInteger == tableTag + 1) {
+                
+                [[FYPlayManager sharedInstance] pauseMusic];
+            }else{
+                TracksViewModel *tracksVM = [[TracksViewModel alloc] initWithAlbumId:[self.contentVM albumIdForRow:tableTag] title:[self.contentVM titleForRow:tableTag] isAsc:YES];
+                [tracksVM getDataCompletionHandle:^(NSError *error){
+                    // 当前播放信息
+                    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+                    userInfo[@"coverURL"] = [tracksVM coverURLForRow:tableTag];
+                    userInfo[@"musicURL"] = [tracksVM playURLForRow:tableTag];
+                    NSInteger indexPathRow = tableTag;
+                    NSNumber *indexPathRown = [[NSNumber alloc]initWithInteger:indexPathRow];
+                    userInfo[@"indexPathRow"] = indexPathRown;
+                    
+                    //专辑
+                    userInfo[@"theSong"] = tracksVM;
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"StartPlay" object:nil userInfo:[userInfo copy]];
+                }];
+            }
+            
+            _playInteger = tableTag + 1;
+
+        }
+
+        NSIndexSet *tableIndexSet=[[NSIndexSet alloc]initWithIndex:tableTag];
+        [self.mainTableView reloadSections:tableIndexSet withRowAnimation:UITableViewRowAnimationAutomatic];//局部刷新
+        if (oldtableTag > 0) {
+            NSIndexSet *tableIndexSet=[[NSIndexSet alloc]initWithIndex:oldtableTag - 1];
+            [self.mainTableView reloadSections:tableIndexSet withRowAnimation:UITableViewRowAnimationAutomatic];//局部刷新
+        }
+        
+    }else{
+        NSInteger tableTag = tag - 1000;
+
+        FYWebViewController *web0 = [[FYWebViewController alloc]init];
+        NSURL *weburl = [self.contentVM urlForRow:tableTag];
+        web0.URL = weburl;
+        [self.navigationController pushViewController:web0 animated:YES];
+
+    }
 }
 
 #pragma mark - 手势
@@ -184,8 +285,7 @@
         _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:alpha];
     }
     
-    if (panGes.state == UIGestureRecognizerStateEnded)
-    {
+    if (panGes.state == UIGestureRecognizerStateEnded){
         if (point.x <= showLeftViewMaxWidth) {
             
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -196,8 +296,7 @@
                 [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
             }];
             
-        }else if (point.x > showLeftViewMaxWidth && point.x <= maxWidth)
-        {
+        }else if (point.x > showLeftViewMaxWidth && point.x <= maxWidth){
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(0, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
@@ -225,7 +324,7 @@
     
     if (ges.state == UIGestureRecognizerStateEnded){
         
-        if ( - point.x <= showLeftViewMaxWidth) {
+        if ( -point.x <= 50) {
             
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(0, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
@@ -234,8 +333,8 @@
                 
             }];
             
-        }else if ( - point.x > showLeftViewMaxWidth &&  - point.x <= maxWidth)
-        {
+        }else {
+            
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
@@ -262,5 +361,18 @@
     
 }
 
+#pragma mark - VM,tableView懒加载
+- (NewContentViewModel *)contentVM {
+    if (!_contentVM) {
+        
+        _contentVM = [[NewContentViewModel alloc] init];
+    }
+    return _contentVM;
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    NSLog(@"delloc");
+}
 
 @end

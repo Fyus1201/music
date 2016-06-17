@@ -28,8 +28,7 @@
         self.animationHeight = animationHeigt;
         self.arcStrokeColor = strokeColor;
         self.frame = CGRectMake(([UIScreen mainScreen].bounds.size.width - ballSize.width) * .5, (self.animationHeight - ballSize.height) * .5 , ballSize.width, ballSize.height);
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startAnimation) name:UIApplicationWillEnterForegroundNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(endAnimation) name:UIApplicationDidEnterBackgroundNotification object:nil];
+
         [self configShape];
 
     }

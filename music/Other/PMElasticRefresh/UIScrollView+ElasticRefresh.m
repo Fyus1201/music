@@ -13,13 +13,14 @@ static const void *PMElasticViewKey = &PMElasticViewKey;
 
 @implementation UIScrollView (ElasticRefresh)
 
+
 - (void)pm_RefreshHeaderWithBlock:(PMRefreshBlock)refreshBlock {
-    
+
     PMElasticView *elasticView = [[PMElasticView alloc] initWithBindingScrollView:self];
     elasticView.refreshBlock = refreshBlock;
     self.elasticView = elasticView;
     [self addSubview:elasticView];
-    
+
 }
 
 - (void)endRefresh {
@@ -41,5 +42,6 @@ static const void *PMElasticViewKey = &PMElasticViewKey;
     
     objc_setAssociatedObject(self, PMElasticViewKey, elasticView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
+
 
 @end

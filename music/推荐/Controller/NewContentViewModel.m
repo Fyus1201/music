@@ -1,47 +1,35 @@
 //
-//  MoreCategoryViewModel.m
+//  NewContentViewModel.m
 //  music
 //
-//  Created by 寿煜宇 on 16/5/18.
+//  Created by 寿煜宇 on 16/6/14.
 //  Copyright © 2016年 Fyus. All rights reserved.
 //
 
-#import "MoreCategoryViewModel.h"
-#import "FYMoreNetManager.h"
-#import "ContentCategoryModel.h"
+#import "NewContentViewModel.h"
 
-@interface MoreCategoryViewModel ()
-@property (nonatomic,strong) ContentCategoryModel *model;
+#import "FYMoreNetManager.h"
+#import "NewCategoryModel.h"
+
+@interface NewContentViewModel ()
+@property (nonatomic,strong) NewCategoryModel *model;
 @end
 
-@implementation MoreCategoryViewModel
+@implementation NewContentViewModel
 
-- (instancetype)initWithCategoryId:(NSInteger)categoryId tagName:(NSString *)name {
+- (instancetype)init {
     if (self = [super init]) {
-        _categoryId = categoryId;
-        _name = name;
+
     }
     return self;
 }
 
 - (void)getDataCompletionHandle:(void (^)(NSError *))completed {
     
-    self.dataTask = [FYMoreNetManager getCategoryForCategoryId:_categoryId tagName:_name pageSize:_pageSize completionHandle:^(ContentCategoryModel* responseObject, NSError *error) {
+    self.dataTask = [FYMoreNetManager getTracksForMusic:0 completionHandle:^(NewCategoryModel *responseObject, NSError *error){
         self.model = responseObject;
         completed(error);
     }];
-}
-
-- (void)refreshDataCompletionHandle:(void (^)(NSError *))completed {
-    // 默认第一次显示20行
-    _pageSize = 20;
-    [self getDataCompletionHandle:completed];
-}
-
-- (void)getMoreDataCompletionHandle:(void (^)(NSError *))completed {
-    // 一次下拉获得10行数据
-    _pageSize += 10;
-    [self getDataCompletionHandle:completed];
 }
 
 /**  返回最大显示行数 */
@@ -57,7 +45,7 @@
 
 /**  通过分组数, 获取图标*/
 - (NSURL *)coverURLForRow:(NSInteger)row {
-    NSString *path = self.model.list[row].coverMiddle;  // albumCoverUrl290一样
+    NSString *path = self.model.list[row].coverLarge;  // albumCoverUrl290一样
     return [NSURL URLWithString:path];
 }
 /**  通过分组数, 获取作者(intro)*/
@@ -81,12 +69,24 @@
 #pragma mark - 跳转页专用
 /**  通过分组数, 获取分类Id */
 - (NSInteger)albumIdForRow:(NSInteger)row {
-    return self.model.list[row].albumId;
+    return self.model.list[row].albumid;
 }
 
 /**  通过分组数, 获取标题(title)*/
 - (NSString *)titleForRow:(NSInteger)row {
     return self.model.list[row].title;
 }
+
+/**  通过分组数, 获取(trackTitle)*/
+- (NSString *)trackTitleForRow:(NSInteger)row {
+    return self.model.list[row].tracktitle;
+}
+
+/**  通过分组数, 获取url*/
+- (NSURL *)urlForRow:(NSInteger)row {
+    NSURL *url = [[NSURL alloc] initWithString:self.model.list[row].weburl];
+    return url;
+}
+
 
 @end

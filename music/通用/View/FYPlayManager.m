@@ -210,6 +210,7 @@ NSString *itemArchivePath(){
             item.trackId = [track[@"trackId"] integerValue];
             item.uid = [track[@"uid"] integerValue];
             item.userSource = [track[@"userSource"] integerValue];
+            item.musicRow = _indexPathRow;
             
             item.orderingValue = order;
         }
@@ -345,9 +346,13 @@ NSString *itemArchivePath(){
     
     NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
     _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
+
     if (_player.currentItem) {
         
-        [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        });
+       
         
     }else{
         

@@ -45,5 +45,6 @@
 @dynamic uid;
 @dynamic userSource;
 @dynamic orderingValue;
+@dynamic musicRow;
 
 @end

@@ -204,7 +204,7 @@
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     userInfo[@"coverURL"] = [self.tracksVM coverURLForRow:indexPath.row];
     userInfo[@"musicURL"] = [self.tracksVM playURLForRow:indexPath.row];
-    //有一个地址不能正确显示图片，搞不懂
+    //有些地址不能正确显示图片，搞不懂
     //NSLog(@"%@",[self.tracksVM coverURLForRow:indexPath.row]);
     
     //位置

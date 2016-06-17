@@ -15,6 +15,7 @@
 #import "EditorModel.h"
 #import "SpecialModel.h"
 #import "DestinationModel.h"
+#import "NewCategoryModel.h"
 
 #define kURLPath @"http://mobile.ximalaya.com/mobile/discovery/v2/category/recommends"
 #define kURLCategoryPath @"http://mobile.ximalaya.com/mobile/discovery/v2/category/recommends"
@@ -62,6 +63,7 @@
     NSDictionary *params = @{@"categoryId":@(categoryId),@"pageSize":@(size),@"tagName":name, kURLPageID,kURLDevice,kURLStatus,kURLCalcDimension};
     return [self GET:kURLAlbumPath parameters:params complationHandle:^(ContentCategoryModel* responseObject, NSError *error) {
         completed([ContentCategoryModel mj_objectWithKeyValues:responseObject],error);
+        //NSLog(@"%@",responseObject);
     }];
 }
 
@@ -90,8 +92,18 @@
     NSString *path = [NSString stringWithFormat:@"http://mobile.ximalaya.com/mobile/others/ca/album/track/%ld/true/1/20",(long)albumId];
     return [self GET:path parameters:params complationHandle:^(id responseObject, NSError *error) {
         completed([DestinationModel mj_objectWithKeyValues:responseObject],error);
-        NSLog(@"%@",responseObject);
+        //NSLog(@"%@",responseObject);
 
+    }];
+}
+
+/** 选取音乐 */
++ (id)getTracksForMusic:(NSInteger)modelId completionHandle:(void(^)(id responseObject, NSError *error))completed {
+    
+    NSString *path = [NSString stringWithFormat:@"http://runjs.cn/uploads/rs/235/k6rirb0f/alb4um.json"];
+    return [self GET:path parameters:nil complationHandle:^(id responseObject, NSError *error) {
+        completed([NewCategoryModel mj_objectWithKeyValues:responseObject],error);
+        //NSLog(@"%@",responseObject);
     }];
 }
 

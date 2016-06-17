@@ -32,6 +32,8 @@
 @property (nonatomic,strong) FYPlayView *playView;
 @property (nonatomic,strong) NSString *imageName;
 
+@property (nonatomic) BOOL isCan;
+
 @end
 
 @implementation FYBarController{
@@ -109,15 +111,15 @@
         FYMainPlayController *mainPlay = [[FYMainPlayController alloc]initWithNibName:@"FYMainPlayController" bundle:nil];
 
         /** 自定义切换，存在问题 */
-        //_interactiveTransition = [[FYPercentDrivenInteractiveTransition alloc]init:mainPlay];
-        //mainPlay.transitioningDelegate = self;
+        _interactiveTransition = [[FYPercentDrivenInteractiveTransition alloc]init:mainPlay];
+        mainPlay.transitioningDelegate = self;
         
         [self presentViewController: mainPlay animated:YES completion:nil];
     }else{
         if ([[FYPlayManager sharedInstance] havePlay]) {
-            [self showMiddleHint:@"加载中"];
+            [self showMiddleHint:@"歌曲加载中"];
         }else
-        [self showMiddleHint:@"歌曲尚未加载"];
+        [self showMiddleHint:@"尚未加载歌曲"];
     }
 
 }
@@ -192,6 +194,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setPausePlayView:) name:@"setPausePlayView" object:nil];
     // 开启一个通知接受,开始播放
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playingWithInfoDictionary:) name:@"BeginPlay" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playingInfoDictionary:) name:@"StartPlay" object:nil];
     //当前歌曲改变
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeCoverURL:) name:@"changeCoverURL" object:nil];
 
@@ -212,89 +215,95 @@
 
 /** 通过播放地址 和 播放图片 */
 - (void)playingWithInfoDictionary:(NSNotification *)notification {
-   
-    // 设置背景图
-    NSURL *coverURL = notification.userInfo[@"coverURL"];
     
-    _tracksVM = notification.userInfo[@"theSong"];
-    _indexPathRow = [notification.userInfo[@"indexPathRow"] integerValue];
-    _rowNumber = self.tracksVM.rowNumber;
-    
-    [self.playView setPlayButtonView];
-    
-    /** 动画 */
-    CGFloat y = [notification.userInfo[@"originy"] floatValue];
-    CGRect rect = CGRectMake(10, y+80, 50, 50);
 
-    CGFloat moveX = s_WindowW -68;
-    CGFloat moveY = s_WindowH - rect.origin.y-60;
-    
-    NSTimeInterval nowTime = [[NSDate date]timeIntervalSince1970]*1000;
-    NSInteger imTag = (long)nowTime%(3600000*24);
-    
-    UIImageView * sImgView = [[UIImageView alloc]initWithFrame:rect];
-    sImgView.tag = imTag;
-    [sImgView sd_setImageWithURL:coverURL];
-    [self.view addSubview:sImgView];
-    sImgView.layer.cornerRadius = 22;
-    sImgView.clipsToBounds = YES;
-    
-    
-    //组动画之修改透明度
-    CABasicAnimation * alphaBaseAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
-    alphaBaseAnimation.fillMode = kCAFillModeForwards;//不恢复原态
-    alphaBaseAnimation.duration = moveX/800;
-    alphaBaseAnimation.removedOnCompletion = NO;
-    [alphaBaseAnimation setToValue:[NSNumber numberWithFloat:0.0]];
-    alphaBaseAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];//决定动画的变化节奏
-    
-    //组动画之缩放动画
-    CABasicAnimation * scaleBaseAnimation = [CABasicAnimation animation];
-    scaleBaseAnimation.removedOnCompletion = NO;
-    scaleBaseAnimation.fillMode = kCAFillModeForwards;//不恢复原态
-    scaleBaseAnimation.duration = moveX/800;
-    scaleBaseAnimation.keyPath = @"transform.scale";
-    scaleBaseAnimation.toValue = @0.3;
-    
-    //组动画之路径变化
-    CGMutablePathRef path = CGPathCreateMutable();//创建一个路径
-    CGPathMoveToPoint(path, NULL, sImgView.center.x, sImgView.center.y);
-    
-    CGPathAddQuadCurveToPoint(path, NULL, sImgView.center.x+moveX/12, sImgView.center.y-80, sImgView.center.x+moveX/12*2, sImgView.center.y);
-    
-    CGPathAddLineToPoint(path,NULL,sImgView.center.x+moveX/12*4,sImgView.center.y+moveY/8);
-    
-    CGPathAddLineToPoint(path,NULL,sImgView.center.x+moveX/12*6,sImgView.center.y+moveY/8*3);
-    
-    CGPathAddLineToPoint(path,NULL,sImgView.center.x+moveX,sImgView.center.y+moveY);
-    
-    
-    CAKeyframeAnimation * frameAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
 
-    frameAnimation.duration = 5*moveX/800;
-
-    frameAnimation.removedOnCompletion = NO;
-    frameAnimation.fillMode = kCAFillModeForwards;
     
-    [frameAnimation setPath:path];
-    CFRelease(path);
-    
-    CAAnimationGroup *animGroup = [CAAnimationGroup animation];
-    
-    animGroup.animations = @[alphaBaseAnimation,scaleBaseAnimation,frameAnimation];
-    animGroup.duration = moveX/800;
-    animGroup.fillMode = kCAFillModeForwards;//不恢复原态
-    animGroup.removedOnCompletion = NO;
-    [sImgView.layer addAnimation:animGroup forKey:[NSString stringWithFormat:@"%ld",(long)imTag]];
-    
-    NSDictionary * dic = @{
-                           @"animationGroup":sImgView,
-                           @"coverURL":coverURL,
-                           };
-    
-    
-    NSTimer * t = [NSTimer scheduledTimerWithTimeInterval:animGroup.duration target:self selector:@selector(endPlayImgView:) userInfo:dic repeats:NO];
-    [[NSRunLoop currentRunLoop]addTimer:t forMode:NSRunLoopCommonModes];
+    if (!_isCan) {
+        _isCan = YES;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"dejTableInteger" object:nil userInfo:nil];
+        // 设置背景图
+        NSURL *coverURL = notification.userInfo[@"coverURL"];
+        
+        _tracksVM = notification.userInfo[@"theSong"];
+        _indexPathRow = [notification.userInfo[@"indexPathRow"] integerValue];
+        _rowNumber = self.tracksVM.rowNumber;
+        
+        [self.playView setPlayButtonView];
+        
+        /** 动画 */
+        CGFloat y = [notification.userInfo[@"originy"] floatValue];
+        CGRect rect = CGRectMake(10, y+80, 50, 50);
+        
+        CGFloat moveX = s_WindowW -68;
+        CGFloat moveY = s_WindowH - rect.origin.y-60;
+        
+        NSTimeInterval nowTime = [[NSDate date]timeIntervalSince1970]*1000;
+        NSInteger imTag = (long)nowTime%(3600000*24);
+        
+        UIImageView * sImgView = [[UIImageView alloc]initWithFrame:rect];
+        sImgView.tag = imTag;
+        [sImgView sd_setImageWithURL:coverURL];
+        [self.view addSubview:sImgView];
+        sImgView.layer.cornerRadius = 22;
+        sImgView.clipsToBounds = YES;
+        
+        //组动画之修改透明度
+        CABasicAnimation * alphaBaseAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+        alphaBaseAnimation.fillMode = kCAFillModeForwards;//不恢复原态
+        alphaBaseAnimation.duration = moveX/800;
+        alphaBaseAnimation.removedOnCompletion = NO;
+        [alphaBaseAnimation setToValue:[NSNumber numberWithFloat:0.0]];
+        alphaBaseAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];//决定动画的变化节奏
+        
+        //组动画之缩放动画
+        CABasicAnimation * scaleBaseAnimation = [CABasicAnimation animation];
+        scaleBaseAnimation.removedOnCompletion = NO;
+        scaleBaseAnimation.fillMode = kCAFillModeForwards;//不恢复原态
+        scaleBaseAnimation.duration = moveX/800;
+        scaleBaseAnimation.keyPath = @"transform.scale";
+        scaleBaseAnimation.toValue = @0.3;
+        
+        //组动画之路径变化
+        CGMutablePathRef path = CGPathCreateMutable();//创建一个路径
+        CGPathMoveToPoint(path, NULL, sImgView.center.x, sImgView.center.y);
+        
+        CGPathAddQuadCurveToPoint(path, NULL, sImgView.center.x+moveX/12, sImgView.center.y-80, sImgView.center.x+moveX/12*2, sImgView.center.y);
+        
+        CGPathAddLineToPoint(path,NULL,sImgView.center.x+moveX/12*4,sImgView.center.y+moveY/8);
+        
+        CGPathAddLineToPoint(path,NULL,sImgView.center.x+moveX/12*6,sImgView.center.y+moveY/8*3);
+        
+        CGPathAddLineToPoint(path,NULL,sImgView.center.x+moveX,sImgView.center.y+moveY);
+        
+        
+        CAKeyframeAnimation * frameAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+        
+        frameAnimation.duration = 5*moveX/800;
+        
+        frameAnimation.removedOnCompletion = NO;
+        frameAnimation.fillMode = kCAFillModeForwards;
+        
+        [frameAnimation setPath:path];
+        CFRelease(path);
+        
+        CAAnimationGroup *animGroup = [CAAnimationGroup animation];
+        
+        animGroup.animations = @[alphaBaseAnimation,scaleBaseAnimation,frameAnimation];
+        animGroup.duration = moveX/800;
+        animGroup.fillMode = kCAFillModeForwards;//不恢复原态
+        animGroup.removedOnCompletion = NO;
+        [sImgView.layer addAnimation:animGroup forKey:[NSString stringWithFormat:@"%ld",(long)imTag]];
+        
+        NSDictionary * dic = @{
+                               @"animationGroup":sImgView,
+                               @"coverURL":coverURL,
+                               };
+        
+        
+        NSTimer * t = [NSTimer scheduledTimerWithTimeInterval:animGroup.duration target:self selector:@selector(endPlayImgView:) userInfo:dic repeats:NO];
+        [[NSRunLoop currentRunLoop]addTimer:t forMode:NSRunLoopCommonModes];
+    }
 
 }
 
@@ -327,7 +336,7 @@
     
     FYPlayManager *playmanager = [FYPlayManager sharedInstance];
     [playmanager playWithModel:_tracksVM indexPathRow:_indexPathRow];
-    
+    _isCan = NO;
     // 远程控制事件 Remote Control Event
     // 加速计事件 Motion Event
     // 触摸事件 Touch Event
@@ -339,6 +348,43 @@
         [timer invalidate];
         timer = nil;
     }
+    
+}
+
+- (void)playingInfoDictionary:(NSNotification *)notification {
+
+    // 设置背景图
+    // 设置背景图
+    NSURL *coverURL = notification.userInfo[@"coverURL"];
+    
+    _tracksVM = notification.userInfo[@"theSong"];
+    _indexPathRow = [notification.userInfo[@"indexPathRow"] integerValue];
+    _rowNumber = self.tracksVM.rowNumber;
+    
+    [self.playView setPlayButtonView];
+    
+    [self.playView.contentIV sd_setImageWithURL:coverURL];
+    self.playView.contentIV.alpha = 0.0;
+    
+    //修改透明度
+    CABasicAnimation * alphaBaseAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    alphaBaseAnimation.fillMode = kCAFillModeForwards;//不恢复原态
+    alphaBaseAnimation.duration = 1.0;
+    alphaBaseAnimation.removedOnCompletion = NO;
+    [alphaBaseAnimation setToValue:[NSNumber numberWithFloat:1.0]];
+    alphaBaseAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];//决定动画的变化节奏
+    
+    [self.playView.contentIV.layer addAnimation:alphaBaseAnimation forKey:[NSString stringWithFormat:@"%ld",(long)self.playView.contentIV]];
+    
+    FYPlayManager *playmanager = [FYPlayManager sharedInstance];
+    [playmanager playWithModel:_tracksVM indexPathRow:_indexPathRow];
+    
+    // 远程控制事件 Remote Control Event
+    // 加速计事件 Motion Event
+    // 触摸事件 Touch Event
+    // 开始监听远程控制事件
+    // 成为第一响应者（必备条件）
+    [self becomeFirstResponder];
     
 }
 

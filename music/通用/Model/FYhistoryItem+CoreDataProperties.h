@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger uid;
 @property (nonatomic) NSInteger userSource;
 @property (nonatomic) double orderingValue;
+@property (nonatomic) NSInteger musicRow;
 
 @end
 
