@@ -187,16 +187,18 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
                 
                 [[FYPlayManager sharedInstance] pauseMusic];
             }else{
+                
                 TracksViewModel *tracksVM = [[TracksViewModel alloc] initWithAlbumId:[self.contentVM albumIdForRow:tableTag] title:[self.contentVM titleForRow:tableTag] isAsc:YES];
+                
                 [tracksVM getDataCompletionHandle:^(NSError *error){
                     // 当前播放信息
                     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
                     userInfo[@"coverURL"] = [tracksVM coverURLForRow:tableTag];
                     userInfo[@"musicURL"] = [tracksVM playURLForRow:tableTag];
+                    
                     NSInteger indexPathRow = tableTag;
                     NSNumber *indexPathRown = [[NSNumber alloc]initWithInteger:indexPathRow];
                     userInfo[@"indexPathRow"] = indexPathRown;
-                    
                     //专辑
                     userInfo[@"theSong"] = tracksVM;
                     

@@ -78,7 +78,7 @@ NSString *itemArchivePath(){
         }else{
             _cycle = theSong;
         }
-        
+        [self.player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
         // 支持后台播放
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         // 激活
@@ -352,16 +352,12 @@ NSString *itemArchivePath(){
         dispatch_async(dispatch_get_main_queue(), ^{
             [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
         });
-       
-        
+
     }else{
         
         _player = [AVPlayer playerWithPlayerItem:_currentPlayerItem];
     }
 
-    [self addNotification];
-    
-    
     __weak FYPlayManager *weakSelf = self;
     [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         
@@ -374,6 +370,7 @@ NSString *itemArchivePath(){
     
     _isPlay = YES;
     [_player play];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:_currentPlayerItem];
     [self setHistoryMusic];
     
 }
@@ -383,10 +380,8 @@ NSString *itemArchivePath(){
 -(void)addNotification{
     
     //给AVPlayerItem添加播放完成通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
-    
-    [self.player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+
 }
 
 //清空播放器监听属性
@@ -543,7 +538,7 @@ NSString *itemArchivePath(){
     }else if(_cycle == isRandom){
         [self randomMusic];
     }
-    
+    NSLog(@"开始下一首");
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     userInfo[@"coverURL"] = [self.tracksVM coverURLForRow:_indexPathRow];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"changeCoverURL" object:nil userInfo:userInfo];

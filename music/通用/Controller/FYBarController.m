@@ -110,9 +110,9 @@
     if ([[FYPlayManager sharedInstance] playerStatus]) {
         FYMainPlayController *mainPlay = [[FYMainPlayController alloc]initWithNibName:@"FYMainPlayController" bundle:nil];
 
-        /** 自定义切换，存在问题 */
-        _interactiveTransition = [[FYPercentDrivenInteractiveTransition alloc]init:mainPlay];
-        mainPlay.transitioningDelegate = self;
+        /** 自定义返回，存在问题,改用手势返回 */
+        //_interactiveTransition = [[FYPercentDrivenInteractiveTransition alloc]init:mainPlay];
+        //mainPlay.transitioningDelegate = self;
         
         [self presentViewController: mainPlay animated:YES completion:nil];
     }else{
@@ -215,9 +215,6 @@
 
 /** 通过播放地址 和 播放图片 */
 - (void)playingWithInfoDictionary:(NSNotification *)notification {
-    
-
-
     
     if (!_isCan) {
         _isCan = YES;
@@ -354,7 +351,6 @@
 - (void)playingInfoDictionary:(NSNotification *)notification {
 
     // 设置背景图
-    // 设置背景图
     NSURL *coverURL = notification.userInfo[@"coverURL"];
     
     _tracksVM = notification.userInfo[@"theSong"];
@@ -378,7 +374,7 @@
     
     FYPlayManager *playmanager = [FYPlayManager sharedInstance];
     [playmanager playWithModel:_tracksVM indexPathRow:_indexPathRow];
-    
+    _isCan = NO;
     // 远程控制事件 Remote Control Event
     // 加速计事件 Motion Event
     // 触摸事件 Touch Event
