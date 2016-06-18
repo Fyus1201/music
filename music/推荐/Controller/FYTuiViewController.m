@@ -51,6 +51,8 @@
 @property (nonatomic,strong) NSMutableArray *KNamel;
 @property (nonatomic,strong) NSMutableArray *myArray;
 
+@property (nonatomic) BOOL isNav;
+
 @end
 
 @implementation FYTuiViewController
@@ -81,6 +83,7 @@
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
 
     if (_tableView0.frame.size.height == s_WindowH-64) {
+
         [UIView animateWithDuration:0.2
                          animations:^{
                              _tableView0.frame = CGRectMake(self.view.frame.size.width * 0, 0, self.view.frame.size.width, s_WindowH-64-49);
@@ -95,8 +98,8 @@
     
     [super viewDidDisappear:animated];
     
-
     if (_tableView0.frame.size.height == s_WindowH-64-49) {
+
         [UIView animateWithDuration:0.2
                          animations:^{
                              _tableView0.frame = CGRectMake(self.view.frame.size.width * 0, 0, self.view.frame.size.width, s_WindowH-64);
@@ -247,7 +250,7 @@
         [_button0 setTitle:@"我的" forState:UIControlStateNormal];
         _button0.titleLabel.font = [UIFont fontWithName:@"HiraginoSans-W3" size:15];
         [_button0 setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-        [_button0 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_button0 addTarget:self action:@selector(tbuttonClick:) forControlEvents:UIControlEventTouchUpInside];
         _button0.tag = 1000;
     }
     return _button0;
@@ -261,7 +264,7 @@
         [_button1 setTitle:@"推荐" forState:UIControlStateNormal];
         _button1.titleLabel.font = [UIFont fontWithName:@"HiraginoSans-W3" size:18];
         [_button1 setTitleColor:[UIColor colorWithRed:252/255.0 green:74/255.0 blue:132/255.0 alpha:0.9] forState:UIControlStateNormal];
-        [_button1 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_button1 addTarget:self action:@selector(tbuttonClick:) forControlEvents:UIControlEventTouchUpInside];
         _button1.tag = 1001;
     }
     return _button1;
@@ -275,7 +278,7 @@
         [_button2 setTitle:@"乐库" forState:UIControlStateNormal];
         _button2.titleLabel.font = [UIFont fontWithName:@"HiraginoSans-W3" size:15];
         [_button2 setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-        [_button2 addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_button2 addTarget:self action:@selector(tbuttonClick:) forControlEvents:UIControlEventTouchUpInside];
         _button2.tag = 1002;
     }
     return _button2;
@@ -328,12 +331,13 @@
     
     
 }
--(void)buttonClick:(UIButton *)btn{
+-(void)tbuttonClick:(UIButton *)btn{
     
     if (btn.tag == 1000){
         
         [_tableView0 reloadData];
 
+        _isNav = YES;
         [self.scroll setContentOffset:CGPointMake(0, -64) animated:YES];
         
         [self.button0 setTitleColor:[UIColor colorWithRed:252/255.0 green:74/255.0 blue:132/255.0 alpha:0.9] forState:UIControlStateNormal];
@@ -530,12 +534,14 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             
             FYMyViewController *myView = [[FYMyViewController alloc]init];
             myView.itemModel = favoritelItem;
+            _isNav = YES;
             [self.navigationController pushViewController:myView animated:YES];
             
         }else if(indexPath.section == 1){
             
             FYMyViewController *myView = [[FYMyViewController alloc]init];
             myView.itemModel = historyItem;
+            _isNav = YES;
             [self.navigationController pushViewController:myView animated:YES];
             
         }else if(indexPath.section == 2){

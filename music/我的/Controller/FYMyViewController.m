@@ -104,14 +104,13 @@
     backItem.title = @"";
     self.navigationItem.backBarButtonItem = backItem;
     self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:252/255.0 green:74/255.0 blue:132/255.0 alpha:0.9];//里面的item颜色
-    self.navigationController.navigationBar.translucent = NO;//是否为半透明
     
 }
 
 #pragma mark - 表格+下拉动画
 - (void)initMainTableView{
     
-    self.mainTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, s_WindowW, s_WindowH-49) style:UITableViewStylePlain];
+    self.mainTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, s_WindowW, s_WindowH) style:UITableViewStylePlain];
     
     self.mainTableView.delegate = self;
     self.mainTableView.dataSource = self;
@@ -225,7 +224,7 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     userInfo[@"musicURL"] = [self.tracksVM playURLForRow:indexPath.row];
     
     //位置
-    CGFloat origin = indexPath.row*80 -_viewY;
+    CGFloat origin = indexPath.row*80 -_viewY-80;
     NSNumber *originy = [[NSNumber alloc]initWithFloat:origin];
     userInfo[@"originy"] = originy;
 
@@ -233,15 +232,18 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     //专辑
     if (_itemModel == historyItem) {
         
+        
+        
         FYhistoryItem *historyItem = _historyItems[indexPath.row];
         TracksViewModel *tracks = [[TracksViewModel alloc] initWithAlbumId:[_tracksVM albumIdForRow:indexPath.row] title:historyItem.albumTitle isAsc:YES];
-        [tracks getDataCompletionHandle:^(NSError *error)  {}];
-        userInfo[@"theSong"] = tracks;
-        
-        NSNumber *musicRow = [[NSNumber alloc]initWithInteger:historyItem.musicRow];
-        userInfo[@"indexPathRow"] = musicRow;
-        
-        NSLog(@"%@",historyItem.albumTitle);
+        [tracks getDataCompletionHandle:^(NSError *error)  {
+            userInfo[@"theSong"] = tracks;
+            
+            NSNumber *musicRow = [[NSNumber alloc]initWithInteger:historyItem.musicRow];
+            userInfo[@"indexPathRow"] = musicRow;
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
+        }];
 
         
     }
@@ -254,9 +256,11 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
         NSInteger indexPathRow = indexPath.row;
         NSNumber *indexPathRown = [[NSNumber alloc]initWithInteger:indexPathRow];
         userInfo[@"indexPathRow"] = indexPathRown;
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
+    
 
 }
 
