@@ -24,7 +24,7 @@
     self.window = [[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
     
     UMAnalyticsConfig *configure = [[UMAnalyticsConfig alloc]init];
-    configure.appKey = @"571a0a8de0f55a471a001314";
+    configure.appKey = @"5723010ee0f55a07a2000cf7";
     [MobClick startWithConfigure:configure];
     
     //self.window.backgroundColor = [UIColor whiteColor];
