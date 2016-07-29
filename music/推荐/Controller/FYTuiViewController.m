@@ -53,6 +53,9 @@
 
 @property (nonatomic) BOOL isNav;
 
+@property (nonatomic, strong) UIView *yourSuperView;
+@property (nonatomic, strong) UIImageView *imaView;
+
 @end
 
 @implementation FYTuiViewController
@@ -67,6 +70,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     [self initUI];
+    [self initAdvView];
 }
 
 #pragma mark - 入出 设置
@@ -117,6 +121,46 @@
     [super viewWillDisappear:animated];
     
 }
+
+#pragma mark - 启动动画
+
+-(void)initAdvView
+{
+    _yourSuperView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
+    _yourSuperView.backgroundColor = s_RGBColor(0.678*255, 0.678*255, 0.678*255);
+    //[self.view addSubview:_yourSuperView];
+    
+    NSMutableArray *refreshingImages = [NSMutableArray array];
+    for (NSUInteger i = 1; i<=9; i++)
+    {
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"launchImage", i]];
+        [refreshingImages addObject:image];
+    }
+    _imaView = [[UIImageView alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width/2-170, [UIScreen mainScreen].bounds.size.height/2-200, 340, 340)];
+    _imaView.animationImages = refreshingImages;
+    [_yourSuperView addSubview:_imaView];
+    [self.view addSubview:_yourSuperView];
+    _yourSuperView.hidden = NO;
+    //设置执行一次完整动画的时长
+    _imaView.animationDuration = 9*0.15;
+    //动画重复次数 （0为重复播放）
+    _imaView.animationRepeatCount = 10;
+    [_imaView startAnimating];
+    
+    
+}
+
+-(void)removeAdvImage
+{
+    [UIView animateWithDuration:0.3f animations:^{
+        _yourSuperView.transform = CGAffineTransformMakeScale(0.5f, 0.5f);
+        _yourSuperView.alpha = 0.f;
+    } completion:^(BOOL finished) {
+        //[_yourSuperView removeFromSuperview];//会直接移除，不能再次使用，故使用隐藏
+        _yourSuperView.hidden = YES;
+    }];
+}
+
 #pragma mark - 初始设置
 -(void)initUI{
 
@@ -160,6 +204,8 @@
         
         [_tableView1 reloadData];
         [_tableView2 reloadData];
+        
+        [self performSelector:@selector(removeAdvImage) withObject:nil afterDelay:1];
     }];
 
 }
@@ -587,7 +633,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             
             
         }else if(indexPath.section == 4){
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"XX音乐" message:@"本应用旨在技术分享，请勿用于商业用途" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"关于竹影音乐" message:@"本应用旨在技术分享，请勿用于商业用途" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
                                                                   handler:^(UIAlertAction * action) {}];
             

@@ -74,9 +74,9 @@
     
     UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width - 20, 40)];
     
-    UILabel *navTitle = [[UILabel alloc] initWithFrame:CGRectMake(view.frame.size.width/2-22, 0, 80, 44)];
+    UILabel *navTitle = [[UILabel alloc] initWithFrame:CGRectMake(view.frame.size.width/2-40, 0, 80, 44)];
 
-    navTitle.text = @"音乐";
+    navTitle.text = @"竹影音乐";
     navTitle.font = [UIFont fontWithName:@".SFUIText-Semibold" size:18];
     
     [view addSubview:navTitle];

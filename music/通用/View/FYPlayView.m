@@ -31,7 +31,7 @@
         [backgoundIV mas_makeConstraints:^(MASConstraintMaker *make) {
             
             make.bottom.mas_equalTo(0);
-            make.width.mas_equalTo(65);
+            make.width.mas_equalTo(85);
             make.height.mas_equalTo(70);
             
             make.right.equalTo(self).with.offset(0);

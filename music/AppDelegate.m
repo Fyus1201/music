@@ -22,7 +22,7 @@
     // Override point for customization after application launch. 5723010ee0f55a07a2000cf7
     
     self.window = [[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
-    
+     [application setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
     UMAnalyticsConfig *configure = [[UMAnalyticsConfig alloc]init];
     configure.appKey = @"5723010ee0f55a07a2000cf7";
     [MobClick startWithConfigure:configure];
@@ -31,6 +31,7 @@
     self.window.rootViewController = [[FYBarController alloc] init];
     [self.window makeKeyAndVisible];
     //[self.window makeKeyWindow];//作为主窗口
+    
     return YES;
 
 }

@@ -63,6 +63,7 @@
     FYTuiViewController *item2 = [[FYTuiViewController alloc]init];
     [self controller:item2 title:@"" image:@"" selectedimage:@""];
     
+    self.tabBar.backgroundColor = [UIColor whiteColor];
     //设置tabbar的颜色
     self.tabBar.barTintColor = [UIColor whiteColor];
     //设置tabbaritem被选中时的颜色

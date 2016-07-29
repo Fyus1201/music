@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Copyright © 2016年 Fyus1201. All rights reserved" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GmI-Z6-rfv">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright © 2016年 Fyus1201. All rights reserved" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GmI-Z6-rfv">
                                 <rect key="frame" x="-4" y="439" width="328" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -33,6 +33,7 @@
                             <constraint firstItem="GmI-Z6-rfv" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="-20" id="33E-ad-nR1"/>
                             <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="GmI-Z6-rfv" secondAttribute="bottom" priority="499" constant="25" id="4TX-jW-eZl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="XKp-Qi-3bu" secondAttribute="trailing" constant="20" id="6TW-RG-tIb"/>
+                            <constraint firstItem="GmI-Z6-rfv" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="CN3-46-EWJ"/>
                             <constraint firstItem="XKp-Qi-3bu" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="FvD-YN-JrD"/>
                             <constraint firstItem="XKp-Qi-3bu" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-45" id="icf-lp-F0K"/>
                             <constraint firstItem="XKp-Qi-3bu" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" constant="20" id="k0P-zj-Iom"/>
