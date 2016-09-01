@@ -18,6 +18,7 @@
 @implementation FYTitleViewCell
 
 - (instancetype)initWithTitle:(NSString *)title hasMore:(BOOL)more titleTag:(NSInteger) titleTag{
+    
     if (self = [super init]) {
         self.title = title;
         self.arrowIV.image = [UIImage imageNamed:@"tabbar_np_play"];
@@ -35,6 +36,7 @@
 
 // 不使用init
 - (instancetype)init {
+    
     if (self = [super init]) {
         NSAssert1(NO, @"%s  必须使用initWithTitle:方法初始化", __FUNCTION__);
     }
@@ -44,6 +46,7 @@
 
 #pragma mark - 懒加载
 - (UIImageView *)arrowV {
+    
     if (!_arrowV) {
         _arrowV = [[UIImageView alloc] init];
         [self addSubview:_arrowV];
@@ -56,6 +59,7 @@
     return _arrowV;
 }
 - (UIImageView *)arrowIV {
+    
     if (!_arrowIV) {
         _arrowIV = [[UIImageView alloc] init];
         [self addSubview:_arrowIV];
@@ -68,6 +72,7 @@
     return _arrowIV;
 }
 - (UILabel *)titleLb {
+    
     if (!_titleLb) {
         _titleLb = [UILabel new];
         [self addSubview:_titleLb];
@@ -82,6 +87,7 @@
     return _titleLb;
 }
 - (UIButton *)moreBtn {
+    
     if (!_moreBtn) {
         _moreBtn = [UIButton new];
         [self addSubview:_moreBtn];
@@ -104,6 +110,7 @@
 }
 
 - (void)click {
+    
     if ([self.delegate respondsToSelector:@selector(titleViewDidClick:)]) {
         [self.delegate titleViewDidClick:self.tag];
     }

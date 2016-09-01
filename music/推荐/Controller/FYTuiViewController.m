@@ -131,8 +131,7 @@
     //[self.view addSubview:_yourSuperView];
     
     NSMutableArray *refreshingImages = [NSMutableArray array];
-    for (NSUInteger i = 1; i<=9; i++)
-    {
+    for (NSUInteger i = 1; i<=9; i++){
         UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"launchImage", i]];
         [refreshingImages addObject:image];
     }
@@ -526,8 +525,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             
             static NSString *cellID = @"TCell101";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-            if (cell == nil)
-            {
+            if (cell == nil){
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
             }
             
@@ -561,8 +559,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     }else{
         static NSString *cellID = @"cell111";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-        if (cell == nil)
-        {
+        if (cell == nil){
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
         }
         cell.textLabel.text = @"无法显示";
@@ -640,7 +637,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
             [alert addAction:defaultAction];
             [self presentViewController:alert animated:YES completion:nil];
         }else if(indexPath.section == 5){
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"开发者" message:@"寿煜宇\n联系邮箱：fyus1201@icloud.com" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"开发者" message:@"寿煜宇\n联系邮箱：438239428@qq.com" preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault
                                                                   handler:^(UIAlertAction * action) {
                                                                       

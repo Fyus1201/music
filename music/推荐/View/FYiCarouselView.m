@@ -17,10 +17,6 @@
 @end
 
 @implementation FYiCarouselView
-{ // 定义完全私有的属性 : 添加成员变量,因为不需要懒加载,所以不需要是属性
-    //NSTimer *_timer;
-    //UIPageControl *_pageControl;
-}
 
 - (instancetype)initWithFocusImgMdoel:(MoreContentViewModel *)Mdoel {
     if (self = [super init]) {
@@ -78,6 +74,7 @@
 
 #pragma mark - iCarousel代理方法
 - (NSInteger)numberOfItemsInCarousel:(iCarousel *)carousel {
+    
     return self.moreVM.focusImgNumber;
 }
 - (UIView *)carousel:(iCarousel *)carousel viewForItemAtIndex:(NSInteger)index reusingView:(nullable UIView *)view {
@@ -103,7 +100,7 @@
 }
 
 /** 允许循环滚动 */
-- (CGFloat)carousel:(iCarousel *)carousel valueForOption:(iCarouselOption)option withDefault:(CGFloat)value {
+- (CGFloat)carousel:(iCarousel *)carousel valueForOption:(iCarouselOption)option withDefault:(CGFloat)value{
     
     if (option == iCarouselOptionWrap) {
         return YES;
@@ -113,6 +110,7 @@
 
 /**  监控滚到第几个 */
 - (void)carouselCurrentItemIndexDidChange:(iCarousel *)carousel {
+    
     _pageControl.currentPage = carousel.currentItemIndex;
 }
 
@@ -123,8 +121,8 @@
     }
 }
 
--(void)addTimer
-{
+-(void)addTimer{
+    
     self.timer = [NSTimer scheduledTimerWithTimeInterval:4.0
                                                   target:self
                                                 selector:@selector(nextImage)
@@ -135,14 +133,13 @@
                              forMode:NSRunLoopCommonModes];
 }
 
-- (void)removeTimer
-{
+- (void)removeTimer{
+    
     [self.timer invalidate];
 }
 
 
-- (void)nextImage
-{
+- (void)nextImage{
     
     NSInteger index = self.carousel.currentItemIndex + 1;
     if (index == self.moreVM.focusImgNumber ) {
@@ -156,6 +153,7 @@
 }
 /**滑动时停止*/
 - (void)carouselWillBeginDragging:(iCarousel *)carousel{
+    
     [self removeTimer];
 }
 

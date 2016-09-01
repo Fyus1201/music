@@ -82,8 +82,6 @@
     [view addSubview:navTitle];
     self.navigationItem.titleView = view;
     
-    //self.navigationItem.title = @"音乐";
-    
     UIBarButtonItem *backItem = [[UIBarButtonItem alloc] init];
     backItem.title = @"";
     self.navigationItem.backBarButtonItem = backItem;

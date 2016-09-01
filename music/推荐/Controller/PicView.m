@@ -10,14 +10,6 @@
 
 @implementation PicView
 
-//- (instancetype)init {
-//    if (self = [super init]) {
-//        self.coverView.hidden = NO;
-//        self.bgView.hidden = NO;
-//    }
-//    return self;
-//}
-
 - (UIImageView *)coverView {
     if (!_coverView) {
         _coverView = [UIImageView new];

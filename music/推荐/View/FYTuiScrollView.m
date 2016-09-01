@@ -51,31 +51,22 @@
     
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    /*
-    if ([self panShowLeftView:gestureRecognizer])
-    {
-        return YES;
-    }
-    return NO;
-    */
-    //NSLog(@"%@",gestureRecognizer);
-    return NO;
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+    
+       return NO;
 }
 #pragma mark - 解决手势冲突
-- (BOOL)panShowLeftView:(UIGestureRecognizer *)gestureRecognizer
-{
-    if (gestureRecognizer == self.panGestureRecognizer)
-    {
+- (BOOL)panShowLeftView:(UIGestureRecognizer *)gestureRecognizer{
+    
+    if (gestureRecognizer == self.panGestureRecognizer){
+        
         UIPanGestureRecognizer *panGes = (UIPanGestureRecognizer *)gestureRecognizer;
         CGPoint point = [panGes translationInView:self];
         UIGestureRecognizerState state = gestureRecognizer.state;
-        if (UIGestureRecognizerStateBegan == state || UIGestureRecognizerStatePossible == state)
-        {
+        if (UIGestureRecognizerStateBegan == state || UIGestureRecognizerStatePossible == state){
+            
             CGPoint location = [gestureRecognizer locationInView:self];
-            if (point.x < 0 && location.x < self.frame.size.width && self.contentOffset.x <= 0)
-            {
+            if (point.x < 0 && location.x < self.frame.size.width && self.contentOffset.x <= 0){
                 return YES;
             }
             
@@ -95,8 +86,7 @@
 }
 -(UIView *)backView{
     
-    if (!_backView)
-    {
+    if (!_backView){
         _backView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height)];
         _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
         UIPanGestureRecognizer *backPan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(backPanGes:)];
@@ -163,7 +153,6 @@
 -(void)backPanGes:(UIPanGestureRecognizer *)ges{
     
     if (ges.state == UIGestureRecognizerStateBegan) {
-        
         initialPosition.x = self.leftView.center.x;
     }
     
@@ -178,7 +167,6 @@
     if (ges.state == UIGestureRecognizerStateEnded){
 
         if (  -point.x <= 50) {
-            
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(0, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0.5];
@@ -187,7 +175,6 @@
             }];
             
         }else{
-            
             [UIView animateWithDuration:0.35f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 _leftView.frame = CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
                 _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
@@ -203,12 +190,10 @@
 -(void)backViewTapGes:(UITapGestureRecognizer *)ges{
     
     [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        
         _leftView.frame = CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
         _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
         
     } completion:^(BOOL finished) {
-        
         self.pan.enabled = YES;
         [_backView removeFromSuperview];
         [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;

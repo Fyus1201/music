@@ -18,19 +18,19 @@
 @implementation FYMyViewCell
 
 - (void)awakeFromNib {
+    
     [super awakeFromNib];
     // Initialization code
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 -(void)setAct:(NSDictionary *)act{
-    _act = act;
     
+    _act = act;
     self.titleLb.text = _act[@"title"];
     self.coverIV.image = [UIImage imageNamed:_act[@"image"]];
 }
@@ -51,6 +51,7 @@
 }
 
 - (UILabel *)titleLb {
+    
     if(_titleLb == nil) {
         _titleLb = [[UILabel alloc] init];
         _titleLb.font = [UIFont systemFontOfSize:17];
