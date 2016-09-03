@@ -359,6 +359,7 @@ NSString *itemArchivePath(){
     }
 
     __weak FYPlayManager *weakSelf = self;
+    //监听
     [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         
         FYPlayManager *innerSelf = weakSelf;

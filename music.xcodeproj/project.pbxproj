@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5F0F2A5A1CE431410024421B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F0F2A591CE431410024421B /* AVFoundation.framework */; };
 		5F0F2A701CE441DF0024421B /* PMBallLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F0F2A681CE441DF0024421B /* PMBallLayer.m */; };
 		5F0F2A711CE441DF0024421B /* PMElasticView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F0F2A6B1CE441DF0024421B /* PMElasticView.m */; };
 		5F0F2A721CE441DF0024421B /* PMLineLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F0F2A6D1CE441DF0024421B /* PMLineLayer.m */; };
@@ -103,7 +102,6 @@
 /* Begin PBXFileReference section */
 		1FE942FA16F365B3D8A2B5B1 /* Pods-music.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-music.debug.xcconfig"; path = "Pods/Target Support Files/Pods-music/Pods-music.debug.xcconfig"; sourceTree = "<group>"; };
 		4CF3D2ECA245E9A3A8D531E4 /* Pods-music.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-music.release.xcconfig"; path = "Pods/Target Support Files/Pods-music/Pods-music.release.xcconfig"; sourceTree = "<group>"; };
-		5F0F2A591CE431410024421B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5F0F2A671CE441DF0024421B /* PMBallLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMBallLayer.h; sourceTree = "<group>"; };
 		5F0F2A681CE441DF0024421B /* PMBallLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMBallLayer.m; sourceTree = "<group>"; };
 		5F0F2A691CE441DF0024421B /* PMElasticRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMElasticRefresh.h; sourceTree = "<group>"; };
@@ -255,7 +253,6 @@
 			files = (
 				5FFCB9EB1D0855C000D09E20 /* MediaPlayer.framework in Frameworks */,
 				5F1FCC341CED8FF80003E5D9 /* Accelerate.framework in Frameworks */,
-				5F0F2A5A1CE431410024421B /* AVFoundation.framework in Frameworks */,
 				8F03D75A4FD110156603B7B0 /* libPods-music.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -714,7 +711,6 @@
 			children = (
 				5FFCB9EA1D0855C000D09E20 /* MediaPlayer.framework */,
 				5F1FCC331CED8FF80003E5D9 /* Accelerate.framework */,
-				5F0F2A591CE431410024421B /* AVFoundation.framework */,
 				6472E66D9181E96ED7CBCE40 /* libPods-music.a */,
 			);
 			name = Frameworks;
