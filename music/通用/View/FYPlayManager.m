@@ -344,24 +344,28 @@ NSString *itemArchivePath(){
     _rowNumber = self.tracksVM.rowNumber;
     _indexPathRow = indexPathRow;
     
+    //通过自定义scheme创建avplayer，在资源的 URL 不能被系统识别时可以自定义视频加载
+    //AVAssetResourceLoaderDelegate实现变缓存遍下载
     NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
     _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
 
-    if (_player.currentItem) {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
-        });
+    //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+    _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
 
-    }else{
-        
-        _player = [AVPlayer playerWithPlayerItem:_currentPlayerItem];
-    }
+    [self addMusicTimeMake];
+    
+    _isPlay = YES;
+    [_player play];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:_currentPlayerItem];
+    [self setHistoryMusic];
+    
+}
 
+-(void)addMusicTimeMake{
     __weak FYPlayManager *weakSelf = self;
     //监听
     [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
-        
+        NSLog(@"dddd");
         FYPlayManager *innerSelf = weakSelf;
         //控制中心
         [innerSelf updateLockedScreenMusic];
@@ -369,11 +373,10 @@ NSString *itemArchivePath(){
         
     }];
     
-    _isPlay = YES;
-    [_player play];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:_currentPlayerItem];
-    [self setHistoryMusic];
-    
+}
+
+-(void)removeMusicTimeMake{
+    //[_player removeTimeObserver:_playbackObserver];
 }
 
 #pragma mark - KVO
@@ -386,8 +389,8 @@ NSString *itemArchivePath(){
 }
 
 //清空播放器监听属性
-- (void)releasePlayer
-{
+- (void)releasePlayer{
+    
     if (!self.currentPlayerItem) {
         return;
     }
@@ -399,8 +402,8 @@ NSString *itemArchivePath(){
 }
 
 /** 监控播放状态 */
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
+    
     AVPlayer *player = (AVPlayer *)object;
     
     if ([keyPath isEqualToString:@"status"]) {
@@ -540,12 +543,12 @@ NSString *itemArchivePath(){
         [self randomMusic];
     }
     NSLog(@"开始下一首");
+    [self.delegate changeMusic];
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     userInfo[@"coverURL"] = [self.tracksVM coverURLForRow:_indexPathRow];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"changeCoverURL" object:nil userInfo:userInfo];
     
-    _isPlay = YES;
-    [_player play];
+
 }
 
 - (void)playPreviousMusic{
@@ -560,11 +563,20 @@ NSString *itemArchivePath(){
 
         NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
         _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
-        [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        
+        //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+        [self addMusicTimeMake];
+        _isPlay = YES;
+        [_player play];
+        
+        [self.delegate changeMusic];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
         
     }
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+
 
 
 }
@@ -581,12 +593,19 @@ NSString *itemArchivePath(){
         
         NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
         _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
-        [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        //iOS9之后 底层会调用信号量等待然后导致当前线程卡顿
         
-    }
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+        //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+        [self addMusicTimeMake];
+        _isPlay = YES;
+        [_player play];
+        
+        [self.delegate changeMusic];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+    }
 
 }
 
@@ -598,12 +617,19 @@ NSString *itemArchivePath(){
         
         NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
         _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
-        [_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        //iOS9之后 底层会调用信号量等待然后导致当前线程卡顿
         
-    }
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+        //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
+        _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+        [self addMusicTimeMake];
+        _isPlay = YES;
+        [_player play];
+        
+        [self.delegate changeMusic];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
+    }
 }
 
 -(void)playAgain{

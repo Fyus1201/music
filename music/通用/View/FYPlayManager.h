@@ -11,6 +11,13 @@
 
 #import "TracksViewModel.h"
 
+@protocol FYPlayManagerDelegate <NSObject>
+
+@required
+- (void)changeMusic;
+
+@end
+
 @interface FYPlayManager : NSObject
 
 //播放状态
@@ -24,7 +31,7 @@ typedef NS_ENUM(NSInteger, itemModel) {
     historyItem = 0,
     favoritelItem = 1
 };
-
+@property (nonatomic, weak) id<FYPlayManagerDelegate> delegate;
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic) BOOL isPlay;
 

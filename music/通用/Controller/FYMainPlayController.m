@@ -16,7 +16,7 @@
 #import "FYPlayManager.h"
 
 @import AVFoundation;
-@interface FYMainPlayController ()
+@interface FYMainPlayController ()<FYPlayManagerDelegate>
 
 /*背景*/
 @property (weak, nonatomic) IBOutlet UIImageView *backgroudImageView;
@@ -84,7 +84,7 @@
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
     //初始化UI
     _playmanager = [FYPlayManager sharedInstance];
-    
+    _playmanager.delegate = self;
     _cycle = [_playmanager FYPlayerCycle];
     switch (_cycle) {
         case theSong:
@@ -146,18 +146,18 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(musicTimeInterval:) name:@"musicTimeInterval" object:nil];
     
-    [player addObserver:self forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:nil];
-    [player addObserver:self forKeyPath:@"currentItem" options:NSKeyValueObservingOptionNew context:nil];
+    //[player addObserver:self forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:nil];
+    //[player addObserver:self forKeyPath:@"currentItem" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 -(void)removeObserverFromPlayer:(AVPlayer *)player{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [player removeObserver:self forKeyPath:@"rate"];
-    [player removeObserver:self forKeyPath:@"currentItem"];
+    //[player removeObserver:self forKeyPath:@"rate"];
+    //[player removeObserver:self forKeyPath:@"currentItem"];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
+    
     if ([keyPath isEqualToString:@"rate"]) {
         //AVPlayerStatus rate= [[change objectForKey:@"new"] intValue];
         //判断暂停/播放
@@ -185,6 +185,24 @@
         
         _newItem = YES;
     }
+}
+//修改音乐
+-(void)changeMusic{
+    
+    FYPlayManager *playmanager = [FYPlayManager sharedInstance];
+    
+    _musicNameLabel.text = [playmanager playMusicName];
+    _musicTitleLabel.text = [playmanager playMusicTitle];
+    _singerLabel.text = [playmanager playSinger];
+    [self setupBackgroudImage:[playmanager playCoverLarge]];
+    [playmanager setHistoryMusic];
+    if ([_playmanager hasBeenFavoriteMusic]) {
+        [_favoriteButton setImage:[UIImage imageNamed:@"red_heart"] forState:UIControlStateNormal];
+    } else {
+        [_favoriteButton setImage:[UIImage imageNamed:@"empty_heart"] forState:UIControlStateNormal];
+    }
+    
+    _newItem = YES;
 }
 
 -(void)musicTimeInterval:(NSNotification *)notification{
@@ -253,7 +271,6 @@
         if (currentTimef == currentTimei) {
             _musicIsCan = NO;
         }
-
     }
     
     if (_musicIsChange == NO && _musicIsCan == NO) {
@@ -277,6 +294,13 @@
     if (_playmanager.player.status == 1) {
         
         [_playmanager pauseMusic];
+        
+        if ([[FYPlayManager sharedInstance] isPlay]) {
+            self.musicIsPlaying = YES;
+        }else{
+            self.musicIsPlaying = NO;
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"setPausePlayView" object:nil userInfo:nil];
         
     }else{
         [self showMiddleHint:@"当前没有音乐"];
@@ -341,8 +365,16 @@
 
     if (_playmanager.player.status == 1) {
         [_playmanager previousMusic];
+        
+        if ([[FYPlayManager sharedInstance] isPlay]) {
+            self.musicIsPlaying = YES;
+        }else{
+            self.musicIsPlaying = NO;
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"setPausePlayView" object:nil userInfo:nil];
+      
     }else{
-        [self showMiddleHint:@"当前没有音乐"];
+        [self showMiddleHint:@"等待加载音乐"];
     }
 
 }
@@ -351,8 +383,16 @@
     
     if (_playmanager.player.status == 1) {
         [_playmanager nextMusic];
+        
+        if ([[FYPlayManager sharedInstance] isPlay]) {
+            self.musicIsPlaying = YES;
+        }else{
+            self.musicIsPlaying = NO;
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"setPausePlayView" object:nil userInfo:nil];
+    
     }else{
-        [self showMiddleHint:@"当前没有音乐"];
+        [self showMiddleHint:@"等待加载音乐"];
     }
 
 }
