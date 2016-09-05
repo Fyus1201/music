@@ -100,7 +100,7 @@
 /** 选取音乐 */
 + (id)getTracksForMusic:(NSInteger)modelId completionHandle:(void(^)(id responseObject, NSError *error))completed {
     
-    NSString *path = [NSString stringWithFormat:@"http://o8yhyhsyd.bkt.clouddn.com/alb4um.json"];
+    NSString *path = [NSString stringWithFormat:@"http://o8yhyhsyd.bkt.clouddn.com/musicAlbum.json"];
     return [self GET:path parameters:nil complationHandle:^(id responseObject, NSError *error) {
         completed([NewCategoryModel mj_objectWithKeyValues:responseObject],error);
         //NSLog(@"%@",responseObject);

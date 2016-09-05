@@ -127,7 +127,8 @@
             
             break;
         case 1:
-            
+
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://sandbox.runjs.cn/show/ep2rmlww"]];
             break;
         case 2:
             
