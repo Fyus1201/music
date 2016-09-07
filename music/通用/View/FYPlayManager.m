@@ -343,9 +343,8 @@ NSString *itemArchivePath(){
     _tracksVM = tracks;
     _rowNumber = self.tracksVM.rowNumber;
     _indexPathRow = indexPathRow;
-    
-    //通过自定义scheme创建avplayer，在资源的 URL 不能被系统识别时可以自定义视频加载
-    //AVAssetResourceLoaderDelegate实现变缓存遍下载
+
+    //AVPlayer的缓存播放实现比较繁琐，可自行查找AVAssetResourceLoader资料
     NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
     _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
 
@@ -365,7 +364,6 @@ NSString *itemArchivePath(){
     __weak FYPlayManager *weakSelf = self;
     //监听
     [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
-        NSLog(@"dddd");
         FYPlayManager *innerSelf = weakSelf;
         //控制中心
         [innerSelf updateLockedScreenMusic];
@@ -617,8 +615,8 @@ NSString *itemArchivePath(){
         
         NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
         _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
-        //iOS9之后 底层会调用信号量等待然后导致当前线程卡顿
         
+        //iOS9之后 底层会调用信号量等待然后导致当前线程卡顿
         //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
         _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -635,6 +633,8 @@ NSString *itemArchivePath(){
 -(void)playAgain{
     
     [_player seekToTime:CMTimeMake(0, 1)];
+    _isPlay = YES;
+    [_player play];
 }
 
 - (void)stopMusic{
