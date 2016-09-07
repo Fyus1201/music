@@ -133,7 +133,7 @@
     
     NSMutableArray *refreshingImages = [NSMutableArray array];
     for (NSUInteger i = 1; i<=9; i++){
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"launchImage", i]];
+        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"launchImage"]];
         [refreshingImages addObject:image];
     }
     _imaView = [[UIImageView alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width/2-170, [UIScreen mainScreen].bounds.size.height/2-200, 340, 340)];
