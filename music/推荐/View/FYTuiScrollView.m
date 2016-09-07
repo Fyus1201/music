@@ -13,7 +13,7 @@
 #define maxWidth 240 //可拖动最大距离
 
 
-@interface FYTuiScrollView ()<UIGestureRecognizerDelegate>
+@interface FYTuiScrollView ()<UIGestureRecognizerDelegate,leftDelegate>
 {
     CGPoint initialPosition;     //初始位置
 }
@@ -81,9 +81,27 @@
     
     if (!_leftView) {
         _leftView = [[LeftView alloc]initWithFrame:CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height)];
+        _leftView.delegate = self;//设置代理
     }
     return _leftView;
 }
+
+- (void)jumpWebVC:(NSURL *)url{
+    
+    [self.sdelegate scrollWebVC:url];
+    
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        _leftView.frame = CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
+        _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
+        
+    } completion:^(BOOL finished) {
+        self.pan.enabled = YES;
+        [_backView removeFromSuperview];
+        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    }];
+}
+
 -(UIView *)backView{
     
     if (!_backView){

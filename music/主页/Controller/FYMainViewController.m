@@ -21,7 +21,7 @@
 #define showLeftViewMaxWidth 10 //拖拽距离
 #define maxWidth 240 //宽
 
-@interface FYMainViewController ()<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate,FYMainTableViewDelegate>
+@interface FYMainViewController ()<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate,FYMainTableViewDelegate,leftDelegate>
 {
     CGPoint initialPosition;     //初始位置
 }
@@ -226,6 +226,25 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     }
 }
 
+
+- (void)jumpWebVC:(NSURL *)url{
+    
+    FYWebViewController *web0 = [[FYWebViewController alloc]init];
+    web0.URL = url;
+    [self.navigationController pushViewController:web0 animated:YES];
+    
+    [UIView animateWithDuration:0.5f delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        _leftView.frame = CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height);
+        _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
+        
+    } completion:^(BOOL finished) {
+        self.pan.enabled = YES;
+        [_backView removeFromSuperview];
+        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+    }];
+}
+
 #pragma mark - 手势
 
 -(void)addGestureRecognizer{
@@ -240,13 +259,15 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (!_leftView) {
         _leftView = [[LeftView alloc]initWithFrame:CGRectMake(-maxWidth, 0, maxWidth, [[UIScreen mainScreen] bounds].size.height)];
+        _leftView.delegate = self;//设置代理
     }
     return _leftView;
 }
+
+
 -(UIView *)backView{
     
-    if (!_backView)
-    {
+    if (!_backView){
         _backView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.height)];
         _backView.backgroundColor = [[UIColor blackColor]colorWithAlphaComponent:0];
         UIPanGestureRecognizer *backPan = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(backPanGes:)];
@@ -360,6 +381,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     }];
     
 }
+
+
 
 #pragma mark - VM,tableView懒加载
 - (NewContentViewModel *)contentVM {

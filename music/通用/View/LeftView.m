@@ -7,6 +7,7 @@
 //
 
 #import "LeftView.h"
+#import "FYWebViewController.h"
 
 @interface LeftView ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -88,7 +89,7 @@
     
     switch (indexPath.section) {
         case 0:
-            cell.textLabel.text = @"每日打卡";
+            cell.textLabel.text = @"签到抽奖";
             break;
         case 1:
             cell.textLabel.text = @"我的主页";
@@ -124,14 +125,15 @@
     
     switch (indexPath.section) {
         case 0:
-            
+            //[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://sandbox.runjs.cn/show/cph8yp2j"]];
+
+            [self.delegate jumpWebVC:[NSURL URLWithString:@"http://sandbox.runjs.cn/show/cph8yp2j"]];
             break;
         case 1:
-
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://sandbox.runjs.cn/show/ep2rmlww"]];
             break;
         case 2:
-            
+
             break;
         case 3:
             
@@ -151,6 +153,5 @@
     }
     
 }
-
 
 @end

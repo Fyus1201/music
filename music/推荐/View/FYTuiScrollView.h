@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FYTuiScrollView : UIScrollView
+@protocol scrollDelegate <NSObject>
+- (void)scrollWebVC:(NSURL *)url;
+@end
 
+@interface FYTuiScrollView : UIScrollView
+@property (nonatomic, weak) id<scrollDelegate> sdelegate;
 @end

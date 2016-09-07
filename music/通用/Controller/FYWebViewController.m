@@ -25,11 +25,12 @@
 - (void)loadView{
     
     self.webView = [[WKWebView alloc] init];
+
     // 导航代理
     self.webView.navigationDelegate = self;
     // 与webview UI交互代理
     self.webView.UIDelegate = self;
-    
+//    self.webView.scrollView.bounces = NO;
     self.view = self.webView;
     //开启手势触摸
     self.webView.allowsBackForwardNavigationGestures = YES;//开启手势

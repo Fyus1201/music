@@ -27,9 +27,10 @@
 #import "FYSongViewController.h"
 
 #import "FYPickerView.h"
+#import "FYWebViewController.h"
 
 
-@interface FYTuiViewController ()<UIScrollViewDelegate,UITableViewDelegate,UITableViewDataSource,FYPickerViewDelegate>
+@interface FYTuiViewController ()<UIScrollViewDelegate,UITableViewDelegate,UITableViewDataSource,FYPickerViewDelegate,scrollDelegate>
 
 @property(nonatomic,strong) FYTuiScrollView *scroll;
 @property (strong, nonatomic) FYPickerView *pickerView;
@@ -217,11 +218,21 @@
         _scroll.pagingEnabled = YES;
         _scroll.showsHorizontalScrollIndicator = NO;
         _scroll.delegate = self;
+        _scroll.sdelegate = self;
+        
         _scroll.bounces = NO;
         self.scroll.contentOffset = CGPointMake(s_WindowW, 0);
         _scroll.alwaysBounceVertical = NO;
+       
     }
     return _scroll;
+}
+- (void)scrollWebVC:(NSURL *)url{
+    
+    FYWebViewController *web0 = [[FYWebViewController alloc]init];
+    web0.URL = url;
+    [self.navigationController pushViewController:web0 animated:YES];
+    
 }
 -(void)initTableView{
     
