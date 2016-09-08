@@ -107,7 +107,7 @@
             cell.textLabel.text = @"意见反馈";
             break;
         case 6:
-            cell.textLabel.text = @"加入我们";
+            cell.textLabel.text = @"(´・ω・)ﾉ点赞";
             break;
         default:
             cell.textLabel.text = @"加载错误";
@@ -142,10 +142,10 @@
             
             break;
         case 5:
-
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"mailto://438239428@qq.com"]];
             break;
         case 6:
-            
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/Fyus1201/music"]];
             break;
         default:
             
