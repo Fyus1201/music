@@ -591,7 +591,6 @@ NSString *itemArchivePath(){
         
         NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
         _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
-        //iOS9之后 底层会调用信号量等待然后导致当前线程卡顿
         
         //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
         _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
@@ -616,7 +615,6 @@ NSString *itemArchivePath(){
         NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
         _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
         
-        //iOS9之后 底层会调用信号量等待然后导致当前线程卡顿
         //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
         _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
