@@ -48,7 +48,7 @@
 
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     if (_itemModel == 0) {
-        self.historyItems = [[FYPlayManager sharedInstance] historyMusicItems];
+        _historyItems = [[FYPlayManager sharedInstance] historyMusicItems];
     }
     
     [self.tracksVM getItemModelData:^(NSError *error) {
@@ -178,11 +178,15 @@
 
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
     //如果申请删除操作
+    
     if (editingStyle == UITableViewCellEditingStyleDelete){
 
         if (_itemModel == historyItem) {
+
             NSDictionary *track = [self.tracksVM trackForRow:indexPath.row];
             [[FYPlayManager sharedInstance] delMyHistoryMusic:track];
+            _historyItems = [[FYPlayManager sharedInstance] historyMusicItems];
+
         }else if(_itemModel == favoritelItem){
             NSDictionary *track = [self.tracksVM trackForRow:indexPath.row];
             [[FYPlayManager sharedInstance] delMyFavoriteMusicDictionary:track];
@@ -191,9 +195,7 @@
         [self.tracksVM getItemModelData:^(NSError *error) {
         }];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-
     }
-    
 }
 
 //删除提示文本
@@ -210,8 +212,8 @@
 - (BOOL)tableView:(UITableView *)tableView
 canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     
+    //
     return YES;
-    
 }
 
 
@@ -228,11 +230,8 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     NSNumber *originy = [[NSNumber alloc]initWithFloat:origin];
     userInfo[@"originy"] = originy;
 
-    
     //专辑
     if (_itemModel == historyItem) {
-        
-        
         
         FYhistoryItem *historyItem = _historyItems[indexPath.row];
         TracksViewModel *tracks = [[TracksViewModel alloc] initWithAlbumId:[_tracksVM albumIdForRow:indexPath.row] title:historyItem.albumTitle isAsc:YES];
@@ -241,11 +240,9 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
             
             NSNumber *musicRow = [[NSNumber alloc]initWithInteger:historyItem.musicRow];
             userInfo[@"indexPathRow"] = musicRow;
-            
             [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
         }];
 
-        
     }
     if (_itemModel == favoritelItem) {
 
@@ -259,9 +256,6 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath{
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"BeginPlay" object:nil userInfo:[userInfo copy]];
     }
-
-    
-
 }
 
 @end

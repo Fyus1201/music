@@ -144,7 +144,7 @@
     //设置执行一次完整动画的时长
     _imaView.animationDuration = 9*0.15;
     //动画重复次数 （0为重复播放）
-    _imaView.animationRepeatCount = 10;
+    _imaView.animationRepeatCount = 5;
     [_imaView startAnimating];
     
     
