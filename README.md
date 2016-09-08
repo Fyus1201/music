@@ -7,7 +7,4 @@
 
 ![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-1.gif) 
 
-![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-2.gif) 
-
-![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-3.gif) 
 
