@@ -11,6 +11,3 @@
 
 ![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-3.gif) 
 
-![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-4.gif) 
-
-![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-5.gif) 
