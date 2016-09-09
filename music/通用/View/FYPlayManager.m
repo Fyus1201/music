@@ -48,7 +48,9 @@ NSString *itemArchivePath(){
     return [pathList[0] stringByAppendingPathComponent:@"guluMusic.sqlite"];//
 }
 
-@implementation FYPlayManager
+@implementation FYPlayManager{
+    id _timeObserve;
+}
 
 
 + (instancetype)sharedInstance {
@@ -79,6 +81,7 @@ NSString *itemArchivePath(){
             _cycle = theSong;
         }
         [self.player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+        
         // 支持后台播放
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         // 激活
@@ -86,11 +89,12 @@ NSString *itemArchivePath(){
         // 开始监控
         [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
         
+        //保存历史纪录和喜爱音乐
         _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
         
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:_managedObjectModel];
         
-        //设置路径
+        //保存地址
         NSURL *storeURL = [NSURL fileURLWithPath:itemArchivePath()];
         NSError *error = nil;
         
@@ -337,18 +341,15 @@ NSString *itemArchivePath(){
 }
 
 #pragma mark - play
-
 - (void)playWithModel:(TracksViewModel *)tracks indexPathRow:(NSInteger ) indexPathRow{
     
     _tracksVM = tracks;
     _rowNumber = self.tracksVM.rowNumber;
     _indexPathRow = indexPathRow;
 
-    //AVPlayer的缓存播放实现比较繁琐，可自行查找AVAssetResourceLoader资料
+    //缓存播放实现，可自行查找AVAssetResourceLoader资料,或采用AudioQueue实现
     NSURL *musicURL = [self.tracksVM playURLForRow:_indexPathRow];
     _currentPlayerItem = [AVPlayerItem playerItemWithURL:musicURL];
-
-    //[_player replaceCurrentItemWithPlayerItem:_currentPlayerItem];
     _player = [[AVPlayer alloc] initWithPlayerItem:_currentPlayerItem];
 
     [self addMusicTimeMake];
@@ -363,18 +364,21 @@ NSString *itemArchivePath(){
 -(void)addMusicTimeMake{
     __weak FYPlayManager *weakSelf = self;
     //监听
-    [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    _timeObserve = [_player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         FYPlayManager *innerSelf = weakSelf;
-        //控制中心
-        [innerSelf updateLockedScreenMusic];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"musicTimeInterval" object:nil userInfo:nil];
+        
+        [innerSelf updateLockedScreenMusic];//控制中心
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"musicTimeInterval" object:nil userInfo:nil];//时间变化
         
     }];
-    
 }
 
 -(void)removeMusicTimeMake{
     //[_player removeTimeObserver:_playbackObserver];
+    if (_timeObserve) {
+        [_player removeTimeObserver:_timeObserve];
+        _timeObserve = nil;
+    }
 }
 
 #pragma mark - KVO
@@ -454,7 +458,7 @@ NSString *itemArchivePath(){
     }else if(_cycle == isRandom){
         [self randomMusic];
     }
-    
+
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     userInfo[@"coverURL"] = [self.tracksVM coverURLForRow:_indexPathRow];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"changeCoverURL" object:nil userInfo:userInfo];
@@ -546,7 +550,6 @@ NSString *itemArchivePath(){
     userInfo[@"coverURL"] = [self.tracksVM coverURLForRow:_indexPathRow];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"changeCoverURL" object:nil userInfo:userInfo];
     
-
 }
 
 - (void)playPreviousMusic{
@@ -622,7 +625,7 @@ NSString *itemArchivePath(){
         [self addMusicTimeMake];
         _isPlay = YES;
         [_player play];
-        
+ 
         [self.delegate changeMusic];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:[self.player currentItem]];
     }

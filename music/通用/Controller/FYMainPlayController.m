@@ -144,20 +144,40 @@
 /** 给AVPlayer添加监控 */
 -(void)addObserverToPlayer:(AVPlayer *)player{
     
+    //监听时间变化
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(musicTimeInterval:) name:@"musicTimeInterval" object:nil];
-    
-    //[player addObserver:self forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:nil];
+    //[player addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];//状态
+    //[player addObserver:self forKeyPath:@"rate" options:NSKeyValueObservingOptionNew context:nil];//播放速度
     //[player addObserver:self forKeyPath:@"currentItem" options:NSKeyValueObservingOptionNew context:nil];
+    //[player addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];//缓冲
 }
 
 -(void)removeObserverFromPlayer:(AVPlayer *)player{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    //[_playmanager.player removeObserver:self forKeyPath:@"status"];
     //[player removeObserver:self forKeyPath:@"rate"];
     //[player removeObserver:self forKeyPath:@"currentItem"];
+    //[player removeObserver:self forKeyPath:@"loadedTimeRanges"];//缓冲
 }
 
+//放弃kvo 因为切换时会重现创建avplayer
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
     
+    if ([keyPath isEqualToString:@"status"]) {
+        switch (_playmanager.player.status) {
+            case AVPlayerStatusUnknown:
+                [self showMiddleHint:@"未知状态，此时不能播放"];
+                break;
+            case AVPlayerStatusReadyToPlay:
+                [self showMiddleHint:@"准备完毕，可以播放"];
+                break;
+            case AVPlayerStatusFailed:
+                [self showMiddleHint:@"加载失败，网络或者服务器出现问题"];
+                break;
+            default:
+                break;
+        }
+    }
     if ([keyPath isEqualToString:@"rate"]) {
         //AVPlayerStatus rate= [[change objectForKey:@"new"] intValue];
         //判断暂停/播放
@@ -168,7 +188,8 @@
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:@"setPausePlayView" object:nil userInfo:nil];
 
-    }else if ([keyPath isEqualToString:@"currentItem"]) {
+    }
+    if ([keyPath isEqualToString:@"currentItem"]) {
         
         FYPlayManager *playmanager = [FYPlayManager sharedInstance];
 
@@ -185,8 +206,17 @@
         
         _newItem = YES;
     }
+    
+    if ([keyPath isEqualToString:@"loadedTimeRanges"]) {
+        AVPlayerItem * songItem = object;
+        NSArray * array = songItem.loadedTimeRanges;
+        CMTimeRange timeRange = [array.firstObject CMTimeRangeValue]; //本次缓冲的时间范围
+        NSTimeInterval totalBuffer = CMTimeGetSeconds(timeRange.start) + CMTimeGetSeconds(timeRange.duration); //缓冲总长度
+        NSLog(@"共缓冲%.2f",totalBuffer);
+    }
 }
-//修改音乐
+
+//歌曲改变
 -(void)changeMusic{
     
     FYPlayManager *playmanager = [FYPlayManager sharedInstance];
@@ -204,13 +234,13 @@
     
     _newItem = YES;
 }
-
+/** 通知 监听时间变化，设置时间 */
 -(void)musicTimeInterval:(NSNotification *)notification{
     
     NSTimeInterval current=CMTimeGetSeconds([_playmanager.player.currentItem currentTime]);
     
     if (_newItem == YES) {
-        AVPlayerItem *newItem=self.playmanager.player.currentItem;
+        AVPlayerItem *newItem = self.playmanager.player.currentItem;
         if (!isnan(CMTimeGetSeconds([newItem duration]) )) {
             
             self.total = CMTimeGetSeconds([newItem duration]);
@@ -260,8 +290,9 @@
         [_musicToggleButton setImage:[UIImage imageNamed:@"big_play_button"] forState:UIControlStateNormal];
     }
 }
-
+/** 设置时间数据 */
 - (void)updateProgressLabelCurrentTime:(NSTimeInterval )currentTime duration:(NSTimeInterval )duration {
+    
     _beginTimeLabel.text = [NSString timeIntervalToMMSSFormat:currentTime];
     _endTimeLabel.text = [NSString timeIntervalToMMSSFormat:duration];
     if (_musicIsCan == YES) {
@@ -382,8 +413,9 @@
 - (IBAction)playNextMusic:(id)sender {
     
     if (_playmanager.player.status == 1) {
-        [_playmanager nextMusic];
         
+        [_playmanager nextMusic];
+
         if ([[FYPlayManager sharedInstance] isPlay]) {
             self.musicIsPlaying = YES;
         }else{

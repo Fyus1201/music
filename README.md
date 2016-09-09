@@ -12,6 +12,8 @@ https://github.com/Fyus1201/music 不给个start吗 (´・ω・)ﾉ
 
 # 效果图
 
-![image](https://github.com/Fyus1201/music/blob/master/image/musicweb-1.gif) 
+![image](https://github.com/Fyus1201/music/blob/master/image/1.gif) 
 
+![image](https://github.com/Fyus1201/music/blob/master/image/2.gif) 
 
+![image](https://github.com/Fyus1201/music/blob/master/image/3.gif) 
