@@ -186,6 +186,7 @@
             NSDictionary *track = [self.tracksVM trackForRow:indexPath.row];
             [[FYPlayManager sharedInstance] delMyHistoryMusic:track];
             _historyItems = [[FYPlayManager sharedInstance] historyMusicItems];
+            [self.mainTableView reloadData];
 
         }else if(_itemModel == favoritelItem){
             NSDictionary *track = [self.tracksVM trackForRow:indexPath.row];
