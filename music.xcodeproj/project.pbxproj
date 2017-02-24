@@ -1102,9 +1102,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/music/Other/PrefixHeader.pch";
 				INFOPLIST_FILE = music/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fyus.music;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fyus1201.music;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1118,9 +1118,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/music/Other/PrefixHeader.pch";
 				INFOPLIST_FILE = music/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fyus.music;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fyus1201.music;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
