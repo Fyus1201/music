@@ -33,8 +33,6 @@
 		5F9DB4781D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB4771D0D2A5B00463741 /* FYPercentDrivenInteractiveTransition.m */; };
 		5F9DB47B1D0D2A8800463741 /* FYMissAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */; };
 		5F9DB50A1D0FF25200463741 /* FYPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB5091D0FF25200463741 /* FYPickerView.m */; };
-		5F9DB50D1D1036C000463741 /* NewCategoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB50C1D1036C000463741 /* NewCategoryModel.m */; };
-		5F9DB5101D103B3E00463741 /* NewContentViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5F9DB50F1D103B3E00463741 /* NewContentViewModel.m */; };
 		5FB4234D1CF5520000B8EA0E /* FYCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB4234C1CF5520000B8EA0E /* FYCategoryViewController.m */; };
 		5FB423501CF5B1A000B8EA0E /* FYSongViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB4234F1CF5B1A000B8EA0E /* FYSongViewController.m */; };
 		5FB423561CF6C30900B8EA0E /* FYTitleViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FB423551CF6C30900B8EA0E /* FYTitleViewCell.m */; };
@@ -60,6 +58,8 @@
 		5FBA3CE41CF1A40A00116802 /* MBProgressHUD+HR.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBA3CE31CF1A40A00116802 /* MBProgressHUD+HR.m */; };
 		5FBA3CE71CF43CC100116802 /* MusicSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBA3CE61CF43CC100116802 /* MusicSlider.m */; };
 		5FBA3CEA1CF4509100116802 /* FYiCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBA3CE91CF4509100116802 /* FYiCarouselView.m */; };
+		5FBCC0ED1E925B480038F1EE /* NewCategoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCC0EC1E925B480038F1EE /* NewCategoryModel.m */; };
+		5FBCC0F01E925B8C0038F1EE /* NewContentViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBCC0EF1E925B8C0038F1EE /* NewContentViewModel.m */; };
 		5FC5E5611CC875870017CFFB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC5E5601CC875870017CFFB /* main.m */; };
 		5FC5E5641CC875870017CFFB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FC5E5631CC875870017CFFB /* AppDelegate.m */; };
 		5FC5E56F1CC875870017CFFB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FC5E56D1CC875870017CFFB /* LaunchScreen.storyboard */; };
@@ -153,10 +153,6 @@
 		5F9DB47A1D0D2A8800463741 /* FYMissAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYMissAnimation.m; sourceTree = "<group>"; };
 		5F9DB5081D0FF25200463741 /* FYPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYPickerView.h; sourceTree = "<group>"; };
 		5F9DB5091D0FF25200463741 /* FYPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYPickerView.m; sourceTree = "<group>"; };
-		5F9DB50B1D1036C000463741 /* NewCategoryModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewCategoryModel.h; path = "../../推荐/Model/NewCategoryModel.h"; sourceTree = "<group>"; };
-		5F9DB50C1D1036C000463741 /* NewCategoryModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NewCategoryModel.m; path = "../../推荐/Model/NewCategoryModel.m"; sourceTree = "<group>"; };
-		5F9DB50E1D103B3E00463741 /* NewContentViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewContentViewModel.h; path = "../../推荐/Controller/NewContentViewModel.h"; sourceTree = "<group>"; };
-		5F9DB50F1D103B3E00463741 /* NewContentViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NewContentViewModel.m; path = "../../推荐/Controller/NewContentViewModel.m"; sourceTree = "<group>"; };
 		5FB4234B1CF5520000B8EA0E /* FYCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYCategoryViewController.h; sourceTree = "<group>"; };
 		5FB4234C1CF5520000B8EA0E /* FYCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYCategoryViewController.m; sourceTree = "<group>"; };
 		5FB4234E1CF5B1A000B8EA0E /* FYSongViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYSongViewController.h; sourceTree = "<group>"; };
@@ -205,6 +201,10 @@
 		5FBA3CE61CF43CC100116802 /* MusicSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MusicSlider.m; sourceTree = "<group>"; };
 		5FBA3CE81CF4509100116802 /* FYiCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FYiCarouselView.h; sourceTree = "<group>"; };
 		5FBA3CE91CF4509100116802 /* FYiCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FYiCarouselView.m; sourceTree = "<group>"; };
+		5FBCC0EB1E925B480038F1EE /* NewCategoryModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewCategoryModel.h; sourceTree = "<group>"; };
+		5FBCC0EC1E925B480038F1EE /* NewCategoryModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewCategoryModel.m; sourceTree = "<group>"; };
+		5FBCC0EE1E925B8C0038F1EE /* NewContentViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewContentViewModel.h; sourceTree = "<group>"; };
+		5FBCC0EF1E925B8C0038F1EE /* NewContentViewModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewContentViewModel.m; sourceTree = "<group>"; };
 		5FC5E55C1CC875870017CFFB /* music.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = music.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FC5E5601CC875870017CFFB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5FC5E5621CC875870017CFFB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -660,10 +660,10 @@
 		5FC5E5B31CC8A84D0017CFFB /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5F9DB50E1D103B3E00463741 /* NewContentViewModel.h */,
-				5F9DB50F1D103B3E00463741 /* NewContentViewModel.m */,
-				5F9DB50B1D1036C000463741 /* NewCategoryModel.h */,
-				5F9DB50C1D1036C000463741 /* NewCategoryModel.m */,
+				5FBCC0EE1E925B8C0038F1EE /* NewContentViewModel.h */,
+				5FBCC0EF1E925B8C0038F1EE /* NewContentViewModel.m */,
+				5FBCC0EB1E925B480038F1EE /* NewCategoryModel.h */,
+				5FBCC0EC1E925B480038F1EE /* NewCategoryModel.m */,
 			);
 			name = Model;
 			path = "主页/Model";
@@ -787,6 +787,7 @@
 					5FC5E55B1CC875870017CFFB = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = 93945FX9PG;
+						ProvisioningStyle = Automatic;
 					};
 					5FC5E5741CC875870017CFFB = {
 						CreatedOnToolsVersion = 7.3;
@@ -904,6 +905,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FBA3CC71CF05C2600116802 /* TracksViewModel.m in Sources */,
+				5FBCC0F01E925B8C0038F1EE /* NewContentViewModel.m in Sources */,
 				5FC5E5A91CC8A8260017CFFB /* FYMyViewController.m in Sources */,
 				5F0F2A731CE441DF0024421B /* UIScrollView+ElasticRefresh.m in Sources */,
 				5FBA3C8E1CF0519D00116802 /* MoreCategoryViewModel.m in Sources */,
@@ -932,13 +934,13 @@
 				5F3FDC941CEC925100B28025 /* FYNetManager.m in Sources */,
 				5F3FDC8B1CEC803B00B28025 /* FYNavigationController.m in Sources */,
 				5FFCB9F71D0A837500D09E20 /* FYhistoryItem+CoreDataProperties.m in Sources */,
-				5F9DB5101D103B3E00463741 /* NewContentViewModel.m in Sources */,
 				5FBA3CA01CF0529B00116802 /* BaseModel.m in Sources */,
 				5F0F2A701CE441DF0024421B /* PMBallLayer.m in Sources */,
 				5FFCFF0C1CFDE08F00763315 /* UIView+FYAnimations.m in Sources */,
 				5F3FDC881CEC803B00B28025 /* FYBarController.m in Sources */,
 				5FBA3CE41CF1A40A00116802 /* MBProgressHUD+HR.m in Sources */,
 				5F3FDC8C1CEC803B00B28025 /* FYWebViewController.m in Sources */,
+				5FBCC0ED1E925B480038F1EE /* NewCategoryModel.m in Sources */,
 				5FBA3CA91CF057E600116802 /* ContentsModel.m in Sources */,
 				5F9DB47B1D0D2A8800463741 /* FYMissAnimation.m in Sources */,
 				5FFCB9FA1D0A837500D09E20 /* FYfavoriteItem.m in Sources */,
@@ -955,7 +957,6 @@
 				5F4CE86B1CE3801F001C0B54 /* FYTuiScrollView.m in Sources */,
 				5FFCB9EE1D0A656000D09E20 /* Model.xcdatamodeld in Sources */,
 				5FFCFF101CFF1AA000763315 /* FYMusicDetailCell.m in Sources */,
-				5F9DB50D1D1036C000463741 /* NewCategoryModel.m in Sources */,
 				5FC5E5611CC875870017CFFB /* main.m in Sources */,
 				5F9B3CE11D06809200B85DE2 /* FYMyViewCell.m in Sources */,
 				5F0F2A711CE441DF0024421B /* PMElasticView.m in Sources */,
@@ -1099,12 +1100,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 93945FX9PG;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/music/Other/PrefixHeader.pch";
 				INFOPLIST_FILE = music/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fyus1201.music;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fyus1202.music;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1115,12 +1118,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 93945FX9PG;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/music/Other/PrefixHeader.pch";
 				INFOPLIST_FILE = music/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.fyus1201.music;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fyus1202.music;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
